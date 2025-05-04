@@ -1,0 +1,122 @@
+/* src/styles/PlayQuizPage.module.css */
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .imageWrapper {
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  
+  .image {
+    max-width: 100%;
+    height: auto;
+  }
+  
+  .questionText {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+  }
+  
+  .answersContainer {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  
+  .answerButton {
+    flex: 1 1 auto;
+    min-width: 100px;
+    padding: 10px;
+    cursor: pointer;
+    border: none;
+    border-radius: 4px;
+    background-color: #f0f0f0; /* цвет невыбранного варианта */
+  }
+  
+  .selectedAnswer {
+    background-color: #4caf50; /* цвет выбранного варианта */
+  }
+  
+  .nextButton {
+    padding: 10px 20px;
+    background-color: #009688;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .progressContainer {
+    margin-top: 30px;
+  }
+  
+  .progressText {
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  .tilesContainer {
+    display: flex;
+    gap: 5px;
+  }
+  
+  .tile {
+    width: 20px;
+    height: 20px;
+    border-radius: 3px;
+  }
+  
+  .tileCompleted {
+    background-color: #4caf50; /* пройденный вопрос */
+  }
+  
+  .tileCurrent {
+    background-color: #009688; /* текущий вопрос */
+  }
+  
+  .tileFuture {
+    background-color: #ccc; /* будущий вопрос */
+  }
+  .progressContainer {
+    margin-top: 30px;
+    text-align: center; /* или другое выравнивание */
+  }
+  
+  .progressText {
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  .tilesContainer {
+    display: flex;
+    gap: 5px;
+    justify-content: center; /* чтобы плитки были по центру */
+  }
+  
+  .tile {
+    width: 20px;
+    height: 20px;
+    border-radius: 3px;
+  }
+  
+  /* Цвет для уже пройденных вопросов */
+  .tileCompleted {
+    background-color: #4caf50;
+  }
+  
+  /* Цвет для текущего вопроса */
+  .tileCurrent {
+    background-color: #009688;
+  }
+  
+  /* Цвет для будущих вопросов */
+  .tileFuture {
+    background-color: #ccc;
+  }
+  

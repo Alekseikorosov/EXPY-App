@@ -1,0 +1,107 @@
+/* src/styles/ResetPassPage.css */
+
+/* Основной контейнер, центрируем по вертикали и горизонтали */
+.resetpass-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Страница занимает всю высоту окна */
+    background-color: #f5f5f5; /* Светлый фон (можно изменить) */
+}
+
+/* Карточка с формой */
+.resetpass-card {
+    background-color: #fff;
+    width: 300px;          /* Ширина карточки */
+    padding: 30px;         /* Внутренние отступы */
+    border-radius: 8px;    /* Скруглённые углы */
+    box-shadow: 0 0 10px rgba(0,0,0,0.1); /* Лёгкая тень */
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;  /* Растягивает элементы по ширине */
+}
+
+/* Заголовок формы */
+.resetpass-title {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+/* Группа полей ввода */
+.resetpass-input-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+}
+
+.resetpass-input-group label {
+    margin-bottom: 5px;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.resetpass-input-group input {
+    padding: 10px;
+    font-size: 0.95rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    outline: none;
+}
+
+.resetpass-input-group input:focus {
+    border-color: #70bcae; /* Цвет рамки при фокусе */
+}
+
+/* Кнопка отправки */
+.resetpass-button {
+    background-color: #70bcae; /* Основной цвет кнопки */
+    color: #fff;
+    font-size: 1rem;
+    padding: 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-bottom: 15px;
+    width: 100%;
+}
+
+.resetpass-button:hover {
+    background-color: #5ba297; /* Потемнее при наведении */
+}
+
+/* Блок ошибки */
+.resetpass-error {
+    color: red;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+/* Блок успешного сообщения */
+.resetpass-success {
+    color: green;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.resetpass-code-container {
+    display: flex;
+    gap: 8px; /* Расстояние между «кубиками» */
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.resetpass-code-input {
+    width: 40px;
+    height: 40px;
+    font-size: 1.5rem;
+    text-align: center;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    outline: none;
+}
+
+.resetpass-code-input:focus {
+    border-color: #70bcae; /* Цвет рамки при фокусе */
+}
+

@@ -1,0 +1,269 @@
+/* src/styles/ResultPage.css */
+
+.result-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .result-title {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+  
+  .result-score {
+    font-size: 1.5rem;
+    text-align: center;
+    margin-bottom: 0.5rem;
+  }
+  
+  .result-progress-bar {
+    width: 100%;
+    height: 20px;
+    background-color: #ddd;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    overflow: hidden; /* чтобы progress-fill не вылезал за края */
+  }
+  
+  .progress-fill {
+    height: 100%;
+    background-color: #009688; 
+    transition: width 0.3s ease;
+  }
+  
+  .result-content {
+    display: flex;
+    gap: 20px;
+    margin-top: 20px;
+  }
+  
+  .questions-nav {
+    flex: 0 0 100px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .nav-item {
+    padding: 8px;
+    text-align: center;
+    border-radius: 4px;
+    cursor: pointer;
+    border: 2px solid transparent;
+  }
+  
+  /* Зеленая рамка для правильных */
+  .nav-correct {
+    border-color: #4caf50;
+    color: #4caf50;
+  }
+  
+  /* Красная рамка для ошибочных */
+  .nav-incorrect {
+    border-color: #f44336;
+    color: #f44336;
+  }
+  
+  .question-details {
+    flex: 1;
+    background-color: #f9f9f9;
+    padding: 15px;
+    border-radius: 4px;
+  }
+  
+  .question-text {
+    margin-bottom: 15px;
+  }
+  
+  .question-image {
+    max-width: 100%;
+    height: auto;
+    margin-bottom: 15px;
+  }
+  
+  .answers-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .answer-item {
+    background-color: #fff;
+    padding: 10px;
+    border-radius: 4px;
+    border: 2px solid #ccc;
+  }
+  
+  /* Стили для правильного ответа */
+  .correct-answer {
+    background-color: #e0f7fa; /* светлый оттенок */
+    border-color: #009688;
+  }
+  
+  /* Стили, если пользователь выбрал ответ и он ошибочный */
+  .user-answer {
+    background-color: #ffebee; /* светлый красный оттенок */
+    border-color: #f44336;
+  }
+  
+  .result-actions {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 30px;
+  }
+  
+  .leave-button {
+    background-color: #f44336;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+  }
+  
+  .again-button {
+    background-color: #009688;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+  }
+  
+  .leave-button:hover,
+  .again-button:hover {
+    opacity: 0.9;
+    cursor: pointer;
+  }
+  /* src/styles/ResultPage.css */
+
+.result-container {
+    display: flex;
+    flex-direction: column;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .result-title {
+    font-size: 2rem;
+    text-align: center;
+    margin-bottom: 0.5rem;
+  }
+  
+  .result-score {
+    font-size: 1.5rem;
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+  
+  .result-progress-bar {
+    width: 100%;
+    height: 20px;
+    background-color: #ddd;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+  
+  .progress-fill {
+    height: 100%;
+    background-color: #009688; 
+    transition: width 0.3s ease;
+  }
+  
+  .result-content {
+    display: flex;
+    gap: 20px;
+  }
+  
+  .questions-nav {
+    width: 150px; /* фиксированная ширина левой колонки */
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .nav-item {
+    padding: 10px;
+    text-align: center;
+    border: 2px solid transparent;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .nav-correct {
+    border-color: #4caf50;
+    color: #4caf50;
+  }
+  
+  .nav-incorrect {
+    border-color: #f44336;
+    color: #f44336;
+  }
+  
+  .question-detail {
+    flex: 1;
+    background-color: #f9f9f9;
+    padding: 15px;
+    border-radius: 4px;
+  }
+  
+  .question-image {
+    max-width: 100%;
+    margin-bottom: 1rem;
+  }
+  
+  .question-text {
+    margin-bottom: 1rem;
+  }
+  
+  .answers-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .answer-item {
+    background-color: #fff;
+    border: 2px solid #ccc;
+    padding: 10px;
+    border-radius: 4px;
+  }
+  
+  /* Если это правильный ответ: */
+  .correct-answer {
+    background-color: #e0f7fa;
+    border-color: #009688;
+  }
+  
+  /* Если пользователь выбрал этот ответ, но он неправильный: */
+  .user-answer {
+    background-color: #ffebee;
+    border-color: #f44336;
+  }
+  
+  .result-actions {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 20px;
+  }
+  
+  .leave-button {
+    background-color: #f44336;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+  }
+  
+  .again-button {
+    background-color: #009688;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+  }
+  

@@ -1,0 +1,665 @@
+/* Глобальные стили */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+.profile-container {
+  font-family: sans-serif;
+  background-color: #f5f5f5;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  height: 100vh; /* Занимаем весь экран */
+}
+
+.profile-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  display: flex;
+  gap: 20px;
+}
+
+/* Левая колонка (sidebar) */
+.profile-sidebar {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  width: 250px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.profile-username {
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.profile-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.menu-item {
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 4px;
+  background-color: #f1f1f1;
+  transition: background-color 0.2s;
+}
+
+.menu-item:hover {
+  background-color: #e3e3e3;
+}
+
+.menu-item.active {
+  background-color: #d0e7d0;
+  font-weight: 600;
+}
+
+/* Правая колонка (main) */
+.profile-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Общий класс блоков */
+.block-container {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+/* Поисковая строка */
+.search-input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+/* Фильтры и bulk-действия */
+.filters-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  align-items: center;
+}
+
+.bulk-actions button {
+  padding: 8px 12px;
+  border: none;
+  background: #007bff;
+  color: #fff;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-right: 10px;
+}
+
+.bulk-actions button:hover {
+  background: #0056b3;
+}
+
+.filter-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  align-items: center;
+}
+
+.date-sort label {
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.date-sort select {
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+/* Таблица для режима table view */
+.quizzes-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.quizzes-table th,
+.quizzes-table td {
+  text-align: left;
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.quizzes-table thead {
+  background: #f0f0f0;
+}
+
+.quizzes-table tbody tr:hover {
+  background: #fafafa;
+}
+
+.start-btn,
+.edit-btn,
+.delete-btn {
+  margin-right: 5px;
+  padding: 5px 10px;
+  cursor: pointer;
+  border: none;
+  border-radius: 4px;
+}
+
+.start-btn {
+  background-color: #28a745;
+  color: #fff;
+}
+
+.edit-btn {
+  background-color: #ffc107;
+  color: #333;
+}
+
+.delete-btn {
+  background-color: #dc3545;
+  color: #fff;
+}
+
+/* Пагинация */
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+}
+
+.pagination-container button {
+  padding: 6px 12px;
+  border: none;
+  background: #ddd;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.pagination-container button.active-page {
+  background: #007bff;
+  color: #fff;
+  font-weight: 600;
+}
+
+/* Модальное окно подтверждения */
+.confirmation-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.confirmation-modal {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  width: 300px;
+  text-align: center;
+}
+
+.confirmation-buttons {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-around;
+}
+
+.confirm-btn {
+  padding: 8px 16px;
+  background-color: #28a745;
+  border: none;
+  color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.cancel-btn {
+  padding: 8px 16px;
+  background-color: #dc3545;
+  border: none;
+  color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* Режим list view (карточки) */
+.list-view {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: flex-start;
+  max-height: 600px;
+  overflow-y: auto;
+  padding: 10px;
+}
+
+.quiz-card {
+  flex: 1 0 calc(33.333% - 20px);
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 10px;
+  box-sizing: border-box;
+  cursor: pointer;
+  transition: box-shadow 0.2s;
+}
+
+.quiz-card:hover {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.quiz-card-title {
+  text-align: center;
+  font-size: 1.1rem;
+  margin-bottom: 8px;
+}
+
+.quiz-card-cover {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  border-radius: 4px;
+  margin-bottom: 8px;
+}
+
+.quiz-card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: auto;
+}
+
+.quiz-card-date {
+  margin-top: 8px;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.quiz-card-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.quiz-card-actions .edit-btn,
+.quiz-card-actions .delete-btn {
+  padding: 5px 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.quiz-card-actions .edit-btn {
+  background-color: #ffc107;
+  color: #333;
+}
+
+.quiz-card-actions .delete-btn {
+  background-color: #dc3545;
+  color: #fff;
+}
+
+/* Прокручиваемый блок для квизов */
+.block-container.quizzes-scrollable {
+  height: calc(100% - 60px);
+  overflow-y: auto;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+/* Обёртка для изображения в карточке */
+.quiz-card-cover-wrap {
+  position: relative;
+  width: 100%;
+  overflow: hidden; /* чтобы оверлей не выступал за границы */
+}
+
+.quiz-card-cover {
+  width: 100%;
+  height: auto;
+  display: block;
+  transition: transform 0.2s;
+}
+
+/* Оверлей при hover */
+.quiz-card-cover-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.4);
+  opacity: 0;
+  transition: opacity 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.quiz-card-cover-wrap:hover .quiz-card-cover-overlay {
+  opacity: 1;
+}
+
+.quiz-card-cover-wrap:hover .quiz-card-cover {
+  transform: scale(1.03);
+}
+
+/* Dropdown меню и кнопка-троеточие */
+.actions-dropdown-wrapper,
+.quiz-card-actions-dropdown {
+  position: relative;
+  display: flex;
+  justify-content: center; /* Центрирование по горизонтали */
+  align-items: center;     /* Центрирование по вертикали */
+  height: 100%;
+}
+
+/* Центрирование содержимого последнего столбца таблицы */
+.quizzes-table td:last-child {
+  text-align: center;
+}
+
+/* Кнопка-троеточие */
+.ellipsis-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2rem;
+  line-height: 0.7;
+  width: 32px;
+  height: 20px;
+  display: flex
+;
+  padding: 0;
+  margin: 0;
+  outline: none;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+
+/* Выпадающее меню */
+.actions-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+  z-index: 10;
+  padding: 5px 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.actions-dropdown button {
+  background: none;
+  border: none;
+  padding: 8px 12px;
+  font-size: 0.9rem;
+  text-align: left;
+  width: 100%;
+  cursor: pointer;
+  white-space: nowrap;
+
+}
+
+.actions-dropdown button:hover {
+  background-color: #f0f0f0;
+}
+
+/* Чекбоксы в таблице */
+.checkbox-cell {
+  width: 40px; /* Фиксированная ширина */
+  text-align: center;
+}
+
+.checkbox-cell .checkbox-wrapper,
+.quizzes-table tbody tr .checkbox-cell input {
+  visibility: hidden;
+}
+
+.quizzes-table tbody tr:hover .checkbox-wrapper,
+.quizzes-table tbody tr.selected .checkbox-wrapper,
+.quizzes-table tbody tr:hover .checkbox-cell input,
+.quizzes-table tbody tr.selected .checkbox-cell input {
+  visibility: visible;
+}
+
+/* Стили для hover и выбранной строки в таблице */
+.quizzes-table tbody tr:hover {
+  background-color: #eaeaea;
+}
+
+.quizzes-table tbody tr.selected {
+  background-color: #dcdcdc;
+}
+/* Блок карточки */
+.quiz-card-new {
+  position: relative;
+  width: 220px;                 /* Ширина карточки (при необходимости меняйте) */
+  background: #f9f9f9;          /* Фон */
+  border: 1px solid #ddd;       /* Рамка */
+  border-radius: 8px;           /* Слегка скруглённые углы */
+  padding: 12px;                /* Внутренние отступы */
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;       /* Располагаем элементы вертикально */
+  align-items: center;          /* Выравниваем содержимое по центру горизонтали */
+  margin: 10px;                 /* Отступ вокруг карточки (если нужно) */
+}
+
+/* Заголовок */
+.quiz-card-new-title {
+  margin: 0;                    /* Сброс стандартных отступов h3 */
+  margin-bottom: 8px;
+  font-size: 1.1rem;
+  text-align: center;
+  color: #333;
+}
+
+/* Обёртка для картинки фиксированного размера */
+.quiz-card-new-cover-wrap {
+  width: 180px;                 /* Фиксированная ширина блока для картинки */
+  height: 120px;                /* Фиксированная высота блока для картинки */
+  background: #eee;             /* Серый фон-заглушка, если картинка не загрузилась */
+  border-radius: 4px;
+  overflow: hidden;
+  display: flex;                /* Центрируем саму картинку, если она меньше блока */
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;           /* Отступ снизу */
+}
+
+/* Картинка внутри обёртки */
+.quiz-card-new-cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;            /* Сохраняем пропорции, заполняя блок */
+}
+
+/* Нижняя часть (creator, date, флажок) */
+.quiz-card-new-footer {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;        /* Прижимаем элементы к нижней границе */
+  margin-top: auto;             /* Чтобы блок "поднялся" к верху, а футер остался внизу */
+}
+
+/* Текстовая часть (creator, date) */
+.quiz-card-new-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+/* Creator и дата */
+.quiz-card-new-creator,
+.quiz-card-new-date {
+  font-size: 0.85rem;
+  color: #555;
+  margin: 0;
+}
+
+/* Иконка-флажок (или bookmark) в правом нижнем углу */
+.quiz-card-new-flag {
+  width: 24px;
+  height: 24px;
+  background-color: #ffc107; /* Любой цвет, который хотите */
+}
+
+/* Карточка квиза */
+.quiz-card-new {
+  position: relative;
+  width: 220px;           /* Ширина карточки */
+  background: #f9f9f9;    /* Фоновый цвет */
+  border: 1px solid #ddd; /* Рамка */
+  border-radius: 8px;
+  padding: 12px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 10px;
+  cursor: pointer;
+  transition: box-shadow 0.2s;
+}
+
+.quiz-card-new:hover {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* Заголовок квиза */
+.quiz-card-new-title {
+  margin: 0 0 8px 0;
+  font-size: 1.1rem;
+  text-align: center;
+  color: #333;
+}
+
+/* Блок для картинки фиксированного размера */
+.quiz-card-new-cover-wrap {
+  width: 180px;
+  height: 120px;
+  background: #eee;
+  border-radius: 4px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+
+.quiz-card-new-cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Нижняя часть карточки */
+.quiz-card-new-footer {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-top: auto;
+}
+
+/* Блок с создателем и датой */
+.quiz-card-new-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  border: 1px solid red;
+}
+
+.quiz-card-new-creator,
+.quiz-card-new-date {
+  font-size: 0.85rem;
+  color: #555;
+  margin: 0;
+}
+
+/* Флажок, выводимый справа внизу */
+.quiz-card-new-flag {
+  width: 24px;
+  height: 24px;
+  background-color: #ffc107; /* Замените или настройте под нужную иконку */
+  border-radius: 4px;
+}
+/* Нижняя часть карточки – футер */
+.quiz-card-new-footer {
+  width: 100%;
+  display: flex;
+  justify-content: space-between; /* левая и правая части по краям */
+  align-items: flex-start;        /* выравнивание по верхнему краю */
+  margin-top: auto;
+}
+
+/* Блок с информацией (категория, кол-во вопросов, дата) */
+.quiz-card-new-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  align-items: flex-start;  /* выравнивание информации по левому краю */
+}
+
+/* Блок с троеточием */
+.actions-dropdown-wrapper {
+  align-self: flex-start; /* располагаем кнопку вверху справа */
+  /* Если нужно, можно задать отступ справа, например: */
+  /* margin-right: 0; */
+}
+/* Блок, который изначально показывает текст "Detail" с красной обводкой */
+.quiz-card-new-detail {
+  position: relative;
+  /* border: 1px solid red; красная обводка */
+  padding: 4px 8px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: #555;
+}
+
+/* Скрытый блок с информацией */
+.detail-info {
+  display: none;
+  position: absolute;
+  top: 100%; /* располагаем ниже родителя */
+  left: 0;
+  width: max-content;
+  background: #fff;
+  border: 1px solid #ccc;
+  padding: 4px 8px;
+  z-index: 10;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+.quiz-card-new.selected {
+  border: 2px solid blue;
+}

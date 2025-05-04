@@ -1,0 +1,27 @@
+.bookmark-icon {
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+  }
+  
+  /* Ключевые кадры «пульса» */
+  @keyframes bookmarkPulse {
+    0% {
+      transform: scale(1);
+    }
+    30% {
+      transform: scale(1.3);
+    }
+    60% {
+      transform: scale(0.9);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+  
+  /* При клике добавляем класс .bookmark-animate */
+  .bookmark-animate {
+    animation: bookmarkPulse 0.4s ease;
+  }
+  

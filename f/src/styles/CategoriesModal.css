@@ -1,0 +1,76 @@
+.categories-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: flex-start; /* окно будет располагаться ближе к верху */
+    justify-content: center;
+    padding-top: 80px; /* отступ сверху */
+    z-index: 9999;
+  }
+  
+  .categories-modal {
+    background-color: #fff;
+    width: 90%;
+    max-width: 600px;
+    border-radius: 8px;
+    min-height: 200px;
+    position: relative;
+    padding: 1rem;
+    box-sizing: border-box;
+  }
+  
+  .close-button {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: transparent;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+  }
+  
+  .categories-search-input {
+    width: 100%;
+    margin-bottom: 1rem;
+    padding: 8px;
+    box-sizing: border-box;
+  }
+  
+  .categories-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    max-height: 300px;
+    overflow-y: auto;
+    margin-bottom: 1rem;
+  }
+  
+  .category-item {
+    padding: 6px 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .category-item.selected {
+    background-color: #007bff;
+    color: #fff;
+    border-color: #007bff;
+  }
+  
+  .add-categories-button {
+    display: block;
+    margin: 0 auto;
+    padding: 8px 16px;
+    cursor: pointer;
+    border: none;
+    border-radius: 4px;
+    background-color: #007bff;
+    color: #fff;
+    font-size: 1rem;
+  }
+  

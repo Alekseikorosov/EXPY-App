@@ -1,0 +1,18 @@
+/* 1) Всегда показываем чекбокс в шапке */
+.selectable-table .ant-table-thead .ant-checkbox-wrapper {
+    visibility: visible !important;
+  }
+  
+  /* 2) Прячем чекбоксы в теле до hover/выбора */
+  .selectable-table .ant-table-tbody .ant-checkbox-wrapper {
+    visibility: hidden !important;
+    transition: none !important;
+  }
+  
+  /* 3) При наведении на строку или если строка выбрана — показываем */
+  .selectable-table .ant-table-tbody .ant-table-row:hover .ant-checkbox-wrapper,
+  .selectable-table .ant-table-tbody .ant-table-row-selected .ant-checkbox-wrapper {
+    visibility: visible !important;
+    transition: none !important;
+  }
+  

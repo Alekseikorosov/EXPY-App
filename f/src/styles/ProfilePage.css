@@ -1,0 +1,80 @@
+.profile-container {
+    font-family: sans-serif;
+  }
+  
+  .profile-content {
+    padding: 20px;
+    text-align: center;
+  }
+  
+  .profile-content h1 {
+    margin-bottom: 20px;
+    font-size: 2rem;
+  }
+  
+  /* Блок с заголовком и карточками */
+  .section-block {
+    margin-top: 40px;
+    text-align: left; /* Выравниваем заголовок по левому краю */
+  }
+  
+  .section-block h2 {
+    margin-bottom: 10px;
+    font-size: 1.5rem;
+  }
+  
+  /* Сетка для квизов */
+  .quizzes-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: flex-start;
+  }
+  
+  .quiz-card {
+    flex: 0 0 calc(25% - 10px);
+    background-color: #eee;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    min-height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+  
+
+  .notification {
+    position: fixed;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #28a745;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 4px;
+    z-index: 10000;
+    /* animation: slideDown 1.5s forwards; */
+  }
+  
+  /* @keyframes slideDown {
+    0% {
+      top: -50px;
+      opacity: 0;
+    }
+    20% {
+      top: 20px;
+      opacity: 1;
+    }
+    80% {
+      top: 20px;
+      opacity: 1;
+    }
+    100% {
+      top: -50px;
+      opacity: 0;
+    }
+  }
+   */
+  
