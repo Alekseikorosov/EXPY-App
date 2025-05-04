@@ -15,8 +15,8 @@ EXPY — это веб-приложение для взаимодействия 
 
 ## Стек технологий
 
-- **Frontend:** ReactJS, TypeScript, Redux, Tailwind CSS  
-- **Backend:** Node.js, Express, MongoDB, WebSocket (Socket.IO)  
+- **Frontend:** ReactJS, JavaScript, Redux, CSS  
+- **Backend:** Node.js, Express, MySQL, WebSocket (Socket.IO)  
 - **CI/CD:** GitHub Actions, Docker  
 - **Аутентификация:** JWT, OAuth2 (Google, GitHub)  
 
@@ -24,13 +24,13 @@ EXPY — это веб-приложение для взаимодействия 
 
 - Node.js ≥ 16.0  
 - npm ≥ 8.0 или yarn ≥ 1.22  
-- MongoDB ≥ 4.4
+- MySQL
 
 ## Установка и запуск
 
 1. Клонировать репозиторий и перейти в корень проекта:
    ```bash
-   git clone https://github.com/ваш-логин/EXPY.git
+   git clone https://github.com/Alekseikorosov/EXPY-App.git
    cd EXPY
    
 2. Установить зависимости для фронтенда:
