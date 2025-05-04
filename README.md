@@ -50,9 +50,20 @@ EXPY — это веб-приложение для взаимодействия 
    REACT_APP_API_URL=http://localhost:3000/api
    
    # .env в backend
-   PORT=5000
-   MONGO_URI=mongodb://localhost:27017/expy
-   JWT_SECRET=ваш_секрет_токена
+   DB_HOST=localhost
+   DB_USER="user"
+   DB_PASS="password"
+   DB_NAME="database_name"
+   DB_PORT=3306
+   
+   ACCESS_TOKEN_SECRET=expyquiztokenaccess
+   REFRESH_TOKEN_SECRET=expyquiztokenrefresh
+   
+   EMAIL_USER=expy876tw4@gmail.com
+   ; EMAIL_PASS="HVOjnue29822&#"
+   EMAIL_PASS=gdde sxls dqze eros
+   
+   MYSQL_URI=mysql://root:@localhost:3306/database_name
 
 5. Запустить фронтенд и бэкенд в режиме разработки:
    # В одном терминале
