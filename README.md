@@ -32,3 +32,40 @@ EXPY — это веб-приложение для взаимодействия 
    ```bash
    git clone https://github.com/ваш-логин/EXPY.git
    cd EXPY
+   
+2. Установить зависимости для фронтенда:
+   cd frontend
+   npm install
+   # или
+   yarn install
+   
+3. Установить зависимости для бэкенда:
+   cd ../backend
+   npm install
+   # или
+   yarn install
+
+4. Настроить переменные окружения в обоих сервисах:
+   # .env в frontend
+   REACT_APP_API_URL=http://localhost:3000/api
+   
+   # .env в backend
+   PORT=5000
+   MONGO_URI=mongodb://localhost:27017/expy
+   JWT_SECRET=ваш_секрет_токена
+
+5. Запустить фронтенд и бэкенд в режиме разработки:
+   # В одном терминале
+   cd frontend
+   npm start
+   
+   # В другом терминале
+   cd backend
+   npm run dev
+   
+6. Открыть приложение в браузере:
+   http://localhost:3000
+## Тестирование
+### Запуск юнит-тестов фронтенда:
+   cd frontend
+   npm test
