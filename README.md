@@ -103,25 +103,68 @@
          npm install
          или
          yarn install
+   ### 4. Создание и настройка *SMTP*-сервиса:
+   1. Установить Nodemailer:
+      ```
+      npm install nodemailer dotenv
+      ```
+            
+   3. Создать .env в корне проекта
+      ```
+      SMTP_HOST=smtp.gmail.com
+      SMTP_PORT=587
+      SMTP_SECURE=false
+      SMTP_USER=ваш.email@gmail.com
+      SMTP_PASS=ваш_пароль_или_app_password
+      ```
    
-   ### 4. Настроить переменные окружения в обоих сервисах:
+   4. Настроить транспортёр (mailer.js)
+      ```
+      import nodemailer from 'nodemailer';
+      import dotenv from 'dotenv';
+      dotenv.config();
+
+      const transporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST,
+      port: +process.env.SMTP_PORT,
+      secure: process.env.SMTP_SECURE === 'true',
+      auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS }
+      });
+
+      export const sendMail = ({ to, subject, html }) =>
+         transporter.sendMail({
+          from: `"EXPY" <${process.env.SMTP_USER}>`,
+          to, subject, html
+         });
+      ```
+         
+   5. Отправить письмо
+      ```
+      import { sendMail } from './mailer.js';
+
+      await sendMail({
+        to: user.email,
+        subject: 'Восстановление пароля',
+        html: `<p>Кликните <a href="${resetLink}">сюда</a></p>`
+      });
+      ```
       
-         - .env в backend
-            DB_HOST=localhost
-            DB_USER="user"
-            DB_PASS="password"
-            DB_NAME="database_name"
-            DB_PORT=3306
-            
-            ACCESS_TOKEN_SECRET="your secret"
-            REFRESH_TOKEN_SECRET="your secret"
-            
-            EMAIL_USER=example@mail.com
-            EMAIL_PASS="your emal app code"
-            
-            MYSQL_URI=mysql://root:@localhost:3306/database_name
+   ### 5. Настроить переменные окружения в обоих сервисах:
+      
+      - .env в backend
+         DB_HOST=localhost
+         DB_USER="user"
+         DB_PASS="password"
+         DB_NAME="database_name"
+         DB_PORT=3306
+         
+         ACCESS_TOKEN_SECRET="your secret"
+         REFRESH_TOKEN_SECRET="your secret"
+         
+         EMAIL_USER=example@mail.com
+         EMAIL_PASS="your emal app code"
    
-   ### 5. Запустить фронтенд и бэкенд в режиме разработки:
+   ### 6. Запустить фронтенд и бэкенд в режиме разработки:
          - В одном терминале
             cd frontend
             npm start
@@ -130,7 +173,7 @@
             cd backend
             npm run dev
       
-   ### 6. Открыть приложение в браузере:
+   ### 7. Открыть приложение в браузере:
          http://localhost:3000
       
    ## Тестирование
