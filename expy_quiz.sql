@@ -329,8 +329,7 @@ CREATE TABLE `password_resets` (
 -- Dumping data for table `password_resets`
 --
 
-INSERT INTO `password_resets` (`email`, `confirmation_code`, `expires_at`) VALUES
-('juri.degtjarjov@ivkhk.ee', '939648', '2025-04-04 07:58:02');
+
 
 -- --------------------------------------------------------
 
@@ -538,9 +537,7 @@ CREATE TABLE `refresh_tokens` (
 -- Dumping data for table `refresh_tokens`
 --
 
-INSERT INTO `refresh_tokens` (`token`, `userId`, `expiresAt`, `created_at`, `id`) VALUES
-('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTQsInVzZXJuYW1lIjoiZGZzZGZzZCIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzQ1NTc3NjI2LCJleHAiOjE3NDYxODI0MjZ9.1jdCC9w4dOilMx9ybzgM45uIeeRvY3UItUNINhUWkUM', 14, '2025-05-02 10:40:26', '2025-04-25 10:40:26', 1),
-('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywidXNlcm5hbWUiOiJ0b3JrbGVlIiwicm9sZSI6InVzZXIiLCJpYXQiOjE3NDU0OTMzOTcsImV4cCI6MTc0NjA5ODE5N30.EQLPnZPl4hyRCtqb4uU14pdtUT_ivwkT6ALRUxskAfQ', 3, '2025-05-01 11:16:37', '2025-04-24 11:16:37', 2);
+
 
 -- --------------------------------------------------------
 
@@ -566,18 +563,7 @@ CREATE TABLE `users` (
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `username`, `email`, `telephone`, `password`, `last_login`, `created_at`, `updated_at`, `role`, `fuel`, `fuel_updated_at`) VALUES
-(1, 'admin', 'admin@example.com', NULL, 'hashed_admin_pass', NULL, '2025-03-25 20:44:08', '2025-04-25 10:40:00', 'admin', 160, '2025-04-25 10:34:33'),
-(2, 'bob', 'bob@example.com', NULL, 'hashed_bob_pass', NULL, '2025-03-25 20:44:08', '2025-04-25 10:40:00', 'user', 160, '2025-04-25 10:34:33'),
-(3, 'uia-uia', 'juri.degtjarjov@gmail.com', '53440432', '$2b$10$QNGSF/Y/XExTEq2gES.IQOsaWPZP/Bb/FkdmgpJc/RTzflRnKS9pK', '2025-04-25 11:33:31', '2025-03-25 20:46:38', '2025-04-25 12:06:00', 'user', 115, '2025-04-25 12:05:51'),
-(4, 'qwer', 'qewr@mail.ru', '5678903', '$2b$10$BD3oB1XAHXaENWzcnW.6suS07lnLhI7oaF./tpuWVBOLl7vWZ1GoG', '2025-03-27 17:49:27', '2025-03-27 17:48:28', '2025-04-25 10:40:00', 'user', 160, '2025-04-25 10:34:33'),
-(5, 'tupoj', 'rwer3985@gmail.com', '5678906', '$2b$10$GneYVdov9NJWYMwfT.nCLuVutwbgBfaduzYOQU7qqNl76JWhxRSpG', NULL, '2025-03-27 21:38:56', '2025-04-25 10:40:00', 'user', 160, '2025-04-25 10:34:33'),
-(7, 'Alexesdfgh', 'vvvvvvvvvvr34lmysdfghjste@gmail.com', '56328543', '$2b$10$YuD098w82vyk53HHPGQN4uHRBOQP7.w/IKa4Jr3IZE4LJ7jr72FE.', NULL, '2025-03-29 18:08:03', '2025-04-25 10:40:00', 'user', 160, '2025-04-25 10:34:33'),
-(13, 'Alex_korsh', 'aleksei.korosov1@gmail.com', NULL, '$2b$10$RtAeHsZznZ1MuKd6ro9iMuoWMQth0iMFEyhSHXcHB0D0dcMCmEoWy', '2025-03-31 21:16:26', '2025-03-30 20:32:41', '2025-04-25 12:03:00', 'user', 21, '2025-04-25 12:02:33'),
-(14, 'dfsdfsd', 'juri.degtjarjov@ivkhk.ee', '53440431', '$2b$10$Mj0cJ6D4efHTip2sCNcWa.yd4Wy1Lk4GKLHe5vq18wIa8dswVT5iS', '2025-04-25 10:40:26', '2025-04-01 06:04:30', '2025-04-25 12:03:00', 'user', 115, '2025-04-25 12:02:33'),
-(15, 'mark', 'mark.baranjuk@ivkhk.ee', '5139556', '$2b$10$ePtdTn2/If.2MoIr/GFUnOHyTl/uIAoXR2GYxWB9Ljc9HeOXJ8kHu', '2025-04-25 08:54:26', '2025-04-25 08:53:36', '2025-04-25 12:06:00', 'user', 9, '2025-04-25 12:05:36'),
-(16, 'Testfuel1', 'testfuel1@gmail.com', '213421', '$2b$10$PgkhKQQDRi9A2QWVMJaayuEMsjYIVTdTh2JvLskifx1GekjyxeJhS', NULL, '2025-04-25 10:52:37', '2025-04-25 12:05:00', 'user', 159, '2025-04-25 12:04:37'),
-(17, 'testreg', 'testreg@gmail.com', '2134212143', '$2b$10$SDD7vxZ5nb.7DI8OK.OyTe.IBwT4NGvd5g/bZ/L3deUgKi1TWVrem', '2025-04-25 11:09:16', '2025-04-25 11:09:01', '2025-04-25 11:09:16', 'user', 160, '2025-04-25 11:09:01');
+
 
 -- --------------------------------------------------------
 
@@ -595,10 +581,8 @@ CREATE TABLE `user_favorites` (
 -- Dumping data for table `user_favorites`
 --
 
-INSERT INTO `user_favorites` (`user_id`, `quiz_id`, `added_at`) VALUES
-(3, 4, '2025-04-19 19:24:45'),
-(3, 230, '2025-04-24 10:57:39'),
-(14, 231, '2025-04-25 10:22:53');
+
+
 
 -- --------------------------------------------------------
 
