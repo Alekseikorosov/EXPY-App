@@ -46,10 +46,19 @@ List of actions performed by each team member.
 
 ## Key Features
 
-* **Quiz creation and editing**
-* **Taking tests** with result display
-* **User profile** with quiz history
-* **Admin panel** for managing users and content
+* Quiz creation and editing
+* Taking tests with result display and statistics
+* User registration and login
+* Password recovery via email links
+* Two-factor authentication (TOTP via authenticator apps, recovery codes, email confirmation)
+* User profile management (viewing and updating name, email, password)
+* Quiz history tracking with progress visualization
+* Saving and accessing favorite quizzes
+* Game session management for quizzes
+* Configurable email notifications for key user actions
+* Admin panel for managing users, quizzes
+* Responsive design for desktop and mobile with styled modals and pages
+* Robust database schema using MySQL and Sequelize ORM.
 
 ## Technology Stack
 
@@ -77,8 +86,9 @@ List of actions performed by each team member.
 * **body-parser** and **cors** — middleware for request body parsing and CORS
 * **nodemailer** — sending emails from Node.js
 * **qrcode** — generating QR codes for 2FA
-* **node-cron** — scheduling background tasks
-* **nodemon** — automatic server restart on code changes
+* **For developers:**
+  * **node-cron** — scheduling background tasks
+  * **nodemon** — automatic server restart on code changes
 
 ## Requirements
 
@@ -92,7 +102,6 @@ List of actions performed by each team member.
 
 ```bash
 git clone https://github.com/Alekseikorosov/EXPY-App.git
-cd EXPY-App
 ```
 
 ### 2. Install frontend dependencies:
