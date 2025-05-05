@@ -15,8 +15,7 @@ EXPY — это веб-приложение для взаимодействия 
 ## Стек технологий
 
 - **Frontend:** ReactJS, JavaScript, Redux, CSS  
-- **Backend:** Node.js, Express, MySQL, WebSocket (Socket.IO)  
-- **CI/CD:** GitHub Actions, Docker  
+- **Backend:** Node.js, Express, MySQL, WebSocket   
 - **Аутентификация:** JWT, OAuth2 (Google, GitHub)  
 
 ## Требования
@@ -55,12 +54,11 @@ EXPY — это веб-приложение для взаимодействия 
    DB_NAME="database_name"
    DB_PORT=3306
    
-   ACCESS_TOKEN_SECRET=expyquiztokenaccess
-   REFRESH_TOKEN_SECRET=expyquiztokenrefresh
+   ACCESS_TOKEN_SECRET="your secret"
+   REFRESH_TOKEN_SECRET="your secret"
    
-   EMAIL_USER=expy876tw4@gmail.com
-   ; EMAIL_PASS="HVOjnue29822&#"
-   EMAIL_PASS=gdde sxls dqze eros
+   EMAIL_USER=example@mail.com
+   EMAIL_PASS="your emal app code"
    
    MYSQL_URI=mysql://root:@localhost:3306/database_name
 
