@@ -84,7 +84,7 @@ List of actions performed by each team member.
 
 * Node.js ≥ 16.0
 * npm ≥ 8.0 or yarn ≥ 1.22
-* MySQL and phpMyAdmin
+* MySQL, XAMPP
 
 ## Installation and Setup
 
