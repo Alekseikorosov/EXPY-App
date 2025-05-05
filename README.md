@@ -1,197 +1,216 @@
 # EXPY
 
-   ## Описание
-   
-   EXPY — это веб-приложение в формате викторин и тестов. 
-   Пользователи могут создавать собственные викторины, 
-   проходить тесты по готовым темам и отслеживать свой прогресс.
+## Description
 
-   ## Кто что делал
+EXPY is a web application for quizzes and tests. Users can create their own quizzes, take tests on predefined topics, and track their progress.
 
-   Cписок, где для каждого участника поочередно указано, какие действия он выполнял.
-   
-   
-   **Юрий Дегтярев**
-   
-   * Создание макета веб-приложения
-   * Создание главной страницы веб-приложения
-   * Создание страницы восстановления пароля веб-приложения
-   * Реализация возможности входа пользователя (backend-структура)
-   * Создание страницы профиля пользователя
-   * Проектирование и создание базы данных для веб-приложения
-   * Разработка компонента истории пройденных квизов пользователя
-   * Страница создания квизов веб-приложения
-   * Возможность сохранения понравившихся квизов пользователем
-   * Создание игровой сессии
-   * Настройка почты для рассылки сообщений
-   * Создание административной панели
-   * Тестирование веб-приложения
-   * Деплой веб-приложения на сервере
-   
-   **Алексей Корышов**
-   
-   * Создание макета веб-приложения
-   * Создание страницы восстановления пароля веб-приложения
-   * Проектирование и создание базы данных для веб-приложения
-   * Настройка почты для рассылки сообщений
-   * Реализация смены имени,       почты и пароля пользователя
-   * Внедрение двухфакторной аутентификации (приложение-аутентификатор, recovery-код, подтверждение по почте)
-   * Тестирование веб-приложения
-   
-   **Олег Койк**
-   
-   * Создание всех иконок и логотипа для проекта
-   * Создание макета веб-приложения
-   * Разработка формы регистрации пользователя
-   * Разработка формы логина веб-приложения
-   * Написание стилей для всех страниц, модальных окон и адаптивный дизайн
-   * Тестирование веб-приложения
+## Contributions
 
-   
-   ## Основные возможности
-   
-   - **Создание и редактирование викторин**  
-   - **Прохождение тестов** с выводом результатов
-   - **Профиль пользователя** с историей прохождений   
-   - **Административная панель** для управления пользователями и контентом
-   
-   ## Стек технологий
-   
-   - **Frontend:**
-     - *react* — библиотека для построения декларативных UI-компонентов.
-     - *react-dom* — пакет для работы React с DOM в браузере.
-     - *react-scripts* — набор скриптов и конфигураций Create React App.
-     - *antd* — UI-фреймворк с готовыми React-компонентами.
-     - *react-router-dom* — декларативная маршрутизация в приложении.
-     - *axios* — HTTP-клиент для запросов на сервер.
-     - *jwt-decode* — утилита для разбора содержимого
-     - *JWT*-токенов на клиенте.
-     - *react-toastify* — простая библиотека для отображения toast-уведомлений.
-  
-   - **Backend:**
-     - *express* — минималистичный веб-фреймворк для организации маршрутов и middleware.
-     - *sequelize* — ORM для работы с реляционной MySQL-базой через модели.
-     - *mysql2* — драйверы для подключения к MySQL. dotenv — загрузка конфигурации из файла .env.
-     - *bcrypt* — хеширование паролей для безопасного хранения.
-     - *jsonwebtoken + jwt-decode* — создание и парсинг JWT-токенов.
-     - *speakeasy* — реализация TOTP-двухфакторной аутентификации.
-     - *body-parser, cors* — middleware для обработки тела запроса и CORS.
-     - *nodemailer* — отправка почтовых сообщений из Node.js. qrcode — генерация QR-кодов для 2FA.
-     - *node-cron* — планировщик фоновых задач.
-     - *nodemon* — автоматический рестарт сервера при изменениях в коде.
-   
-   ## Требования
-   
-   - Node.js ≥ 16.0  
-   - npm ≥ 8.0 или yarn ≥ 1.22  
-   - MySQL + phpMyAdmin
-   
-   ## Установка и запуск
-   
-   ### 1. Клонировать репозиторий и перейти в корень проекта:
-         git clone https://github.com/Alekseikorosov/EXPY-App.git
-         cd EXPY
-      
-   ### 2. Установить зависимости для фронтенда:
-         cd frontend
-         npm install
-         или
-         yarn install
-      
-   ### 3. Установить зависимости для бэкенда:
-         cd ../backend
-         npm install
-         или
-         yarn install
-   ### 4. Создание и настройка *SMTP*-сервиса:
-   1. Установить Nodemailer:
-      ```
-      npm install nodemailer dotenv
-      ```
-            
-   3. Создать .env в корне проекта
-      ```
-      SMTP_HOST=smtp.gmail.com
-      SMTP_PORT=587
-      SMTP_SECURE=false
-      SMTP_USER=ваш.email@gmail.com
-      SMTP_PASS=ваш_пароль_или_app_password
-      ```
-   
-   4. Настроить транспортёр (mailer.js)
-      ```
-      import nodemailer from 'nodemailer';
-      import dotenv from 'dotenv';
-      dotenv.config();
+List of actions performed by each team member.
 
-      const transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST,
-      port: +process.env.SMTP_PORT,
-      secure: process.env.SMTP_SECURE === 'true',
-      auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS }
-      });
+**Juri Degtjarjov**
 
-      export const sendMail = ({ to, subject, html }) =>
-         transporter.sendMail({
-          from: `"EXPY" <${process.env.SMTP_USER}>`,
-          to, subject, html
-         });
-      ```
-         
-   5. Отправить письмо
-      ```
-      import { sendMail } from './mailer.js';
+* Designed the web application layout
+* Developed the main page of the web application
+* Created the password recovery page
+* Implemented user login functionality (backend structure)
+* Built the user profile page
+* Designed and created the database for the web application
+* Developed the user quiz history component
+* Created the quiz creation page
+* Enabled saving favorite quizzes for users
+* Implemented game session creation
+* Configured email service for sending messages
+* Built the admin panel
+* Tested the web application
+* Deployed the application to the server
 
-      await sendMail({
-        to: user.email,
-        subject: 'Восстановление пароля',
-        html: `<p>Кликните <a href="${resetLink}">сюда</a></p>`
-      });
-      ```
-      
-   ### 5. Настроить переменные окружения в обоих сервисах:
-      
-      - .env в backend
-         DB_HOST=localhost
-         DB_USER="user"
-         DB_PASS="password"
-         DB_NAME="database_name"
-         DB_PORT=3306
-         
-         ACCESS_TOKEN_SECRET="your secret"
-         REFRESH_TOKEN_SECRET="your secret"
-         
-         EMAIL_USER=example@mail.com
-         EMAIL_PASS="your emal app code"
-   
-   ### 6. Запустить фронтенд и бэкенд в режиме разработки:
-         - В одном терминале
-            cd frontend
-            npm start
-         
-         - В другом терминале
-            cd backend
-            npm run dev
-      
-   ### 7. Открыть приложение в браузере:
-         http://localhost:3000
-      
-   ## Тестирование
-   
-      - Запуск юнит-тестов фронтенда:
-         cd frontend
-         npm test
-         
-      - Запуск тестов бэкенда:
-         cd backend
-         npm test
-   
-   ## Развёртывание   
-   
-   ### 1. Собрать фронтенд:
-            cd frontend
-            npm run build
-         
-   ### 3. Создать Docker-композиторий:
-            docker-compose up --build -d
-      
+**Aleksei Korosov**
+
+* Designed the web application layout
+* Created the password recovery page
+* Designed and created the database for the web application
+* Configured email service for sending messages
+* Implemented user name, email, and password update functionality
+* Integrated two-factor authentication (authenticator app, recovery code, email confirmation)
+* Tested the web application
+
+**Oleg Koik**
+
+* Designed all project icons and logo
+* Designed the web application layout
+* Developed the user registration form
+* Developed the login form
+* Wrote styles for all pages, modal windows, and responsive design
+* Tested the web application
+
+## Key Features
+
+* **Quiz creation and editing**
+* **Taking tests** with result display
+* **User profile** with quiz history
+* **Admin panel** for managing users and content
+
+## Technology Stack
+
+### Frontend
+
+* **react** — library for building declarative UI components
+* **react-dom** — package for working with the browser DOM
+* **react-scripts** — scripts and configuration from Create React App
+* **antd** — UI framework with ready-made React components
+* **react-router-dom** — declarative routing
+* **axios** — HTTP client for making requests to the server
+* **jwt-decode** — utility for decoding JWT tokens on the client
+* **react-toastify** — library for toast notifications
+
+### Backend
+
+* **express** — web framework for routing and middleware
+* **sequelize** — ORM for working with a MySQL database using models
+* **mysql2** — MySQL driver
+* **dotenv** — loading configuration from `.env`
+* **bcrypt** — password hashing for secure storage
+* **jsonwebtoken** — creating and verifying JWT tokens
+* **jwt-decode** — parsing JWT tokens
+* **speakeasy** — TOTP two-factor authentication implementation
+* **body-parser** and **cors** — middleware for request body parsing and CORS
+* **nodemailer** — sending emails from Node.js
+* **qrcode** — generating QR codes for 2FA
+* **node-cron** — scheduling background tasks
+* **nodemon** — automatic server restart on code changes
+
+## Requirements
+
+* Node.js ≥ 16.0
+* npm ≥ 8.0 or yarn ≥ 1.22
+* MySQL and phpMyAdmin
+
+## Installation and Setup
+
+### 1. Clone the repository and navigate to the project root:
+
+```bash
+git clone https://github.com/Alekseikorosov/EXPY-App.git
+cd EXPY-App
+```
+
+### 2. Install frontend dependencies:
+
+```bash
+cd frontend
+npm install # or yarn install
+```
+
+### 3. Install backend dependencies:
+
+```bash
+cd ../backend
+npm install # or yarn install
+```
+
+### 4. Set up SMTP service for email:
+
+1. Install Nodemailer:
+
+```bash
+npm install nodemailer dotenv
+```
+
+2. Create a `.env` file in the project root:
+
+```ini
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_SECURE=false
+SMTP_USER=your.email@gmail.com
+SMTP_PASS=your_password_or_app_password
+```
+
+3. Configure the mailer (`mailer.js`):
+
+```js
+import nodemailer from 'nodemailer';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+const transporter = nodemailer.createTransport({
+  host: process.env.SMTP_HOST,
+  port: +process.env.SMTP_PORT,
+  secure: process.env.SMTP_SECURE === 'true',
+  auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS }
+});
+
+export const sendMail = ({ to, subject, html }) =>
+  transporter.sendMail({
+    from: `"EXPY" <${process.env.SMTP_USER}>`,
+    to,
+    subject,
+    html
+  });
+```
+
+4. Send a test email:
+
+```js
+import { sendMail } from './mailer.js';
+
+await sendMail({
+  to: user.email,
+  subject: 'Password Recovery',
+  html: `<p>Click <a href="${resetLink}">here</a> to reset your password</p>`
+});
+```
+
+### 5. Configure environment variables for both services:
+
+Create a `.env` file in the `backend` directory:
+
+```ini
+DB_HOST=localhost
+DB_USER=user
+DB_PASS=password
+DB_NAME=database_name
+DB_PORT=3306
+ACCESS_TOKEN_SECRET=your_secret
+REFRESH_TOKEN_SECRET=your_secret
+EMAIL_USER=example@mail.com
+EMAIL_PASS=your_email_app_password
+```
+
+### 6. Run frontend and backend in development mode:
+
+* In one terminal:
+
+```bash
+cd frontend
+npm start
+```
+
+* In another terminal:
+
+```bash
+cd backend
+npm run dev
+```
+
+### 7. Open the application in your browser:
+
+[http://localhost:3000](http://localhost:3000)
+
+## Testing
+
+* **Frontend unit tests:**
+
+```bash
+cd frontend
+npm test
+```
+
+* **Backend tests:**
+
+```bash
+cd backend
+npm test
+```
