@@ -2,10 +2,10 @@
 
 ## Description
 
-EXPY is a web application for quizzes and tests. Users can create their own quizzes, take tests on predefined topics, and track their progress.
+EXPY is a web application where users can take various multiple-choice tests; additionally, registered users can create their own quizzes for others to take.
 
 ## Contributions
-
+Our team consists of three members.
 List of actions performed by each team member.
 
 **Juri Degtjarjov**
@@ -202,26 +202,6 @@ npm start
 ```bash
 cd backend
 npm run dev
-```
-
-### 7. Open the application in your browser:
-
-[http://localhost:3000](http://localhost:3000)
-
-## Testing
-
-* **Frontend unit tests:**
-
-```bash
-cd frontend
-npm test
-```
-
-* **Backend tests:**
-
-```bash
-cd backend
-npm test
 ```
 ## Contacts
 * aleksei.korosov@ivkhk.ee
