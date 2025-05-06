@@ -223,3 +223,5 @@ npm test
 cd backend
 npm test
 ```
+## Contacts
+* aleksei.korosov@ivkhk.ee
