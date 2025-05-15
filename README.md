@@ -187,6 +187,11 @@ ACCESS_TOKEN_SECRET=your_secret
 REFRESH_TOKEN_SECRET=your_secret
 EMAIL_USER=example@mail.com
 EMAIL_PASS=your_email_app_password
+BASE_URL=https://expy.zapto.org
+
+CLOUD_COMPUTING_PLETFORM_STORAGE_CONNECTION_STRING=DefaultEndpointsProtocol=https;AccountName=your_account_name;AccountKey=your_AccountKey;EndpointSuffix=core.windows.net
+CLOUD_COMPUTING_PLETFORM_STORAGE_CONTAINER=folder_name
+
 ```
 
 ### 6. Run frontend and backend in development mode:
