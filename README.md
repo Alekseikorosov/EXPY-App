@@ -1,8 +1,9 @@
 # EXPY
 
 ## Description
-
 EXPY is a web application where users can take various multiple-choice tests; additionally, registered users can create their own quizzes for others to take.
+
+![reg](https://github.com/user-attachments/assets/ec6aa290-145f-47fe-9411-94b146890986)
 
 ## Contributions
 Our team consists of three members.
