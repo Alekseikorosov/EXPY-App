@@ -1,10 +1,10 @@
-# EXPY
+t# EXPY
 
 ## Description
 EXPY is a web application where users can take various multiple-choice tests; additionally, registered users can create their own quizzes for others to take.
 
 ![reg](https://github.com/user-attachments/assets/ec6aa290-145f-47fe-9411-94b146890986)
-
+The homepage for users.
 ## Contributions
 Our team consists of three members.
 List of actions performed by each team member.
@@ -193,6 +193,11 @@ CLOUD_COMPUTING_PLETFORM_STORAGE_CONNECTION_STRING=DefaultEndpointsProtocol=http
 CLOUD_COMPUTING_PLETFORM_STORAGE_CONTAINER=folder_name
 
 ```
+![41](https://github.com/user-attachments/assets/da038702-df53-4b4a-87a8-98ae17d800b5)
+Example cloud computing pletform "Microsoft Azure".
+
+![40](https://github.com/user-attachments/assets/c3b65bcb-9670-4008-a323-ab237b698d13)
+Folders in MC Azure.
 
 ### 6. Run frontend and backend in development mode:
 
