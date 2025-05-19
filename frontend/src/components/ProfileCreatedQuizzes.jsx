@@ -21,8 +21,25 @@ function ProfileCreatedQuizzes({ searchTerm, selectedCategories, setSelectedCate
   // Для режима таблицы: показываем 7 квизов на страницу
   const tableQuizzesPerPage = 7;
   const [currentPage, setCurrentPage] = useState(1);
-  // Режим отображения: 'table' (по умолчанию) или 'list'
-  const [viewMode, setViewMode] = useState('table');
+
+
+  const [isMobile, setIsMobile] = useState(
+    typeof window !== 'undefined' && window.innerWidth <= 768
+    );
+    // Режим отображения: по умолчанию table на десктопе, list на мобилке
+    const [viewMode, setViewMode] = useState(isMobile ? 'list' : 'table');
+  
+    useEffect(() => {
+      const onResize = () => {
+        const mobile = window.innerWidth <= 768;
+          setIsMobile(mobile);
+          setViewMode(mobile ? 'list' : 'table');
+        };
+        // сразу приводим в корректный режим при монтировании
+        onResize();
+        window.addEventListener('resize', onResize);
+        return () => window.removeEventListener('resize', onResize);
+      }, []);
   // Модальные окна
   const [isCategoriesModalOpen, setIsCategoriesModalOpen] = useState(false);
   const [confirmModal, setConfirmModal] = useState({
@@ -209,6 +226,12 @@ function ProfileCreatedQuizzes({ searchTerm, selectedCategories, setSelectedCate
   // Рендер строк таблицы для режима "table"
   const renderQuizRow = (quiz) => {
     const isSelected = selectedQuizzes.includes(quiz.id);
+
+    const shortTitle =
+  quiz.title && quiz.title.length > 15
+    ? quiz.title.slice(0, 15) + '…'
+    : quiz.title || 'No text';
+
     return (
       <tr key={quiz.id} className={isSelected ? 'selected' : ''} onClick={() => handleRowClick(quiz.id)}>
         <td className="checkbox-cell">
@@ -223,7 +246,7 @@ function ProfileCreatedQuizzes({ searchTerm, selectedCategories, setSelectedCate
             />
           </div>
         </td>
-        <td>{quiz.title}</td>
+        <td title={quiz.title}>{shortTitle}</td>
         <td>{quiz.category?.name || 'No Category'}</td>
         <td>{quiz.question_quantity}</td>
         <td>{new Date(quiz.created_at).toLocaleDateString()}</td>
@@ -251,12 +274,18 @@ function ProfileCreatedQuizzes({ searchTerm, selectedCategories, setSelectedCate
     );
   };
 
-  return (
-    <div className="profile-created-quizzes">
-      <div className="block-container">
-        <div className="filters-row">
-          <div className="bulk-actions">
-            <button onClick={handleSelectAll}>Select All</button>
+              return (
+                <div className="profile-created-quizzes">
+                  <div className="block-container">
+                    <div className="filters-row">
+                      <div className="bulk-actions">
+                      <button
+              className={allSelected ? 'active' : ''}
+              onClick={handleSelectAll}
+            >
+              {allSelected ? 'Deselect All' : 'Select All'}
+            </button>
+
             {selectedQuizzes.length > 0 && (
               <button onClick={handleDeleteSelected}>Delete with selected</button>
             )}
@@ -264,8 +293,8 @@ function ProfileCreatedQuizzes({ searchTerm, selectedCategories, setSelectedCate
           <div className="filter-controls">
             <div className="date-sort">
               <label>
-                Date:
                 <select value={dateSort} onChange={(e) => setDateSort(e.target.value)}>
+                  <option>Date</option>
                   <option value="new">New</option>
                   <option value="old">Old</option>
                 </select>
@@ -279,71 +308,82 @@ function ProfileCreatedQuizzes({ searchTerm, selectedCategories, setSelectedCate
         </div>
       </div>
 
-      <div className="block-container">
-        <div className="filters-row">
-          <div className="view-mode-toggle">
-            <button onClick={() => { setViewMode('table'); setCurrentPage(1); }} className={viewMode === 'table' ? 'active' : ''}>
-              Table View
-            </button>
-            <button onClick={() => setViewMode('list')} className={viewMode === 'list' ? 'active' : ''}>
-              List View
-            </button>
-          </div>
-        </div>
-      </div>
 
-      <div className="block-container quizzes-scrollable">
-        {viewMode === 'table' ? (
-          <div className="table-wrapper">
-            <table className="quizzes-table">
-              <thead>
-                <tr>
-                  <th></th>
-                  <th>Title</th>
-                  <th>Category</th>
-                  <th>Questions</th>
-                  <th>Date</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {sortedQuizzes.length > 0 ? (
-                  currentQuizzes.map((quiz) => renderQuizRow(quiz))
-                ) : (
-                  <tr>
-                    <td colSpan="5" style={{ textAlign: 'center' }}>No quizzes</td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-        ) : (
-          <div className="list-view">
-            {sortedQuizzes.length > 0 ? (
-              sortedQuizzes.map((quiz) => (
-                <QuizCard
-                  key={quiz.id}
-                  quiz={quiz}
-                  selectedQuizzes={selectedQuizzes}
-                  handleSelectQuiz={handleSelectQuiz}
-                  openDetailQuizId={openDetailQuizId}
-                  setOpenDetailQuizId={setOpenDetailQuizId}
-                  openDropdownQuizId={openDropdownQuizId}
-                  setOpenDropdownQuizId={setOpenDropdownQuizId}
-                  handleStartQuiz={handleStartQuiz}
-                  navigate={navigate}
-                />
-              ))
-            ) : (
-              <div style={{ textAlign: 'center' }}>No quizzes</div>
-            )}
-          </div>
-        )}
-      </div>
+        {/* View toggle */}
+      {!isMobile && (
+  <div className="filters-row">
+    <div className="view-mode-toggle">
+      <button
+        onClick={() => { setViewMode('table'); setCurrentPage(1); }}
+        className={viewMode === 'table' ? 'active' : ''}
+      >
+        Table View
+      </button>
+      <button
+        onClick={() => setViewMode('list')}
+        className={viewMode === 'list' ? 'active' : ''}
+      >
+        List View
+      </button>
+    </div>
+  </div>
+)}
 
-      {viewMode === 'table' && totalPages > 1 && (
+
+<div className="block-container">
+  {viewMode === 'table' ? (
+    <div className="table-wrapper scrollable">
+      <table className="quizzes-table">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Title</th>
+            <th>Category</th>
+            <th>Questions</th>
+            <th>Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {sortedQuizzes.length > 0 ? (
+            currentQuizzes.map((quiz) => renderQuizRow(quiz))
+          ) : (
+            <tr>
+              <td colSpan="6" style={{ textAlign: 'center' }}>No quizzes</td>
+            </tr>
+          )}
+        </tbody>
+      </table>
+    </div>
+  ) : (
+    <div className="list-view scrollable">
+      {sortedQuizzes.length > 0 ? (
+        sortedQuizzes.map((quiz) => (
+          <QuizCard
+            key={quiz.id}
+            quiz={quiz}
+            selectedQuizzes={selectedQuizzes}
+            handleSelectQuiz={handleSelectQuiz}
+            openDetailQuizId={openDetailQuizId}
+            setOpenDetailQuizId={setOpenDetailQuizId}
+            openDropdownQuizId={openDropdownQuizId}
+            setOpenDropdownQuizId={setOpenDropdownQuizId}
+            handleStartQuiz={handleStartQuiz}
+            navigate={navigate}
+          />
+        ))
+      ) : (
+        <div style={{ textAlign: 'center' }}>No quizzes</div>
+      )}
+    </div>
+  )}
+</div>
+
+
+
+{viewMode === 'table' && totalPages > 1 && (
         <div className="pagination-container">
-          <button onClick={() => handlePageChange(currentPage - 1)}>Prev</button>
+          <button onClick={() => handlePageChange(currentPage - 1)}>«</button>
           {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
             <button
               key={page}
@@ -353,7 +393,7 @@ function ProfileCreatedQuizzes({ searchTerm, selectedCategories, setSelectedCate
               {page}
             </button>
           ))}
-          <button onClick={() => handlePageChange(currentPage + 1)}>Next</button>
+          <button onClick={() => handlePageChange(currentPage + 1)}>»</button>
         </div>
       )}
 

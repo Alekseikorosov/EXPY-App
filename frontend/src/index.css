@@ -11,3 +11,13 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+::selection {
+  background-color: #2ca192; /* ваш новый цвет фона выделения */
+  color: #000000;            /* цвет текста при выделении */
+}
+::-moz-selection {
+  background-color: #2ca192; /* Firefox */
+  color: #000000;
+}
+

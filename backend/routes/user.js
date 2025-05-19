@@ -8,7 +8,9 @@ const {
   getAllUsers,
   updateUsername,
   updateEmail,
-  updatePassword
+  updatePassword,
+  confirmPassword,
+  getProfile
 } = require('../controllers/userController');
 
 // Для админа: получить всех пользователей
@@ -23,5 +25,7 @@ router.get(
 router.put('/username', verifyToken, updateUsername);
 router.put('/email',    verifyToken, updateEmail);
 router.put('/password', verifyToken, updatePassword);
+router.post('/confirm-password', verifyToken, confirmPassword);
+router.get('/profile', verifyToken, getProfile);
 
 module.exports = router;

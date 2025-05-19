@@ -1,0 +1,76 @@
+.recovery-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 40px auto;
+    max-width: 500px;
+    width: 100%;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #333;
+}
+
+.recovery-title {
+    font-size: 2rem;
+    color: #009870; /* Тот же цвет, что на скриншоте */
+    margin-bottom: 10px;
+}
+
+.recovery-subtitle {
+    font-size: 1rem;
+    margin-bottom: 30px;
+    color: #666;
+}
+
+.recovery-card {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px 25px;
+    width: 100%;
+    max-width: 350px;
+    text-align: left;
+}
+
+.recovery-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.recovery-form label {
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #009870;
+}
+
+.recovery-input {
+    background-color: #d6f1eb; /* Светло-зелёный фон для поля */
+    border: none;
+    border-radius: 4px;
+    height: 40px;
+    padding: 0 10px;
+    font-size: 1rem;
+    margin-bottom: 20px;
+    outline: none;
+}
+
+.recovery-button {
+    background-color: #009870;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    height: 40px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.recovery-button:hover {
+    background-color: #008062; /* чуть темнее */
+}
+
+.checkbox-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 12px 0;
+}

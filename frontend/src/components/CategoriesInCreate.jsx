@@ -1,0 +1,108 @@
+
+// export default CategoriesModal;
+import React, { useState, useEffect } from 'react';
+import api from '../utils/axiosInstance';
+import PropTypes from 'prop-types';
+import '../styles/CategoriesModal.css';
+
+ function CategoriesInCreate({
+     isOpen,
+     onClose,
+     onAddCategories,
+     alreadySelected = [],
+   }) {
+     const [allCategories, setAllCategories] = useState([]);
+     const [searchQuery, setSearchQuery] = useState('');
+     const [selectedCats, setSelectedCats] = useState([]);
+
+     useEffect(() => {
+      if (isOpen) {
+       // Сбрасываем поиск и выделение при каждом открытии
+       setSearchQuery('');
+        setSelectedCats([...alreadySelected]);
+ 
+        api.get('/categories/all')
+          .then(res => setAllCategories(res.data))
+          .catch(err => console.error(err));
+       }
+     }, [isOpen]);
+
+  const filteredCategories = allCategories.filter(cat =>
+    cat.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+
+  // const toggleCategory = (catObj) => {
+  //   setSelectedCats(prev => {
+  //     const found = prev.find(c => c.id === catObj.id);
+  //     return found ? prev.filter(c => c.id !== catObj.id) : [...prev, catObj];
+  //   });
+  // };
+  const toggleCategory = (catObj) => {
+    setSelectedCats(prev => {
+      // если клик по уже выбранной — очищаем выбор, иначе оставляем только этот
+      const isSelected = prev.some(c => c.id === catObj.id);
+      return isSelected ? [] : [catObj];
+    });
+  };
+
+  const handleAdd = () => {
+    onAddCategories(selectedCats);
+    onClose();
+  };
+
+  const handleOverlayClick = () => onClose();
+  const handleModalClick = (e) => e.stopPropagation();
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="categories-overlay" onClick={handleOverlayClick}>
+      <div className="categories-modal" onClick={handleModalClick}>
+        <button className="close-button" onClick={onClose}>×</button>
+        <h2>Choose Category</h2>
+        <input
+          type="text"
+          placeholder="Search categories..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="categories-search-input"
+        />
+          <div className="categories-list">
+                    {filteredCategories.map((cat, idx) => (
+            <div
+              key={`${(cat.id ?? cat.name)}-${idx}`}
+              className={`category-item ${selectedCats.some(c => c.id === cat.id) ? 'selected' : ''}`}
+              onClick={() => toggleCategory(cat)}
+            >
+              {cat.name}
+            </div>
+          ))}
+        </div>
+        <button className="add-categories-button" onClick={handleAdd}>
+          Add Category
+        </button>
+      </div>
+    </div>
+  );
+}
+
+CategoriesInCreate.propTypes = {
+  isOpen: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
+  onAddCategories: PropTypes.func.isRequired,
+  alreadySelected: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number.isRequired,
+      name: PropTypes.string.isRequired
+    })
+  ),
+  availableCategories: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number.isRequired,
+      name: PropTypes.string.isRequired
+    })
+  )
+};
+
+export default CategoriesInCreate;

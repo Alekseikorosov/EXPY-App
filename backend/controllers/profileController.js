@@ -57,7 +57,7 @@ exports.getUserHistory = async (req, res) => {
         {
           model: Quiz,
           as: 'quiz',
-          attributes: ['id', 'title', 'question_quantity'],
+          attributes: ['id', 'title', 'question_quantity', 'cover'],
           include: [
             { model: Category, as: 'category', attributes: ['id', 'name'] }
           ]
@@ -66,8 +66,8 @@ exports.getUserHistory = async (req, res) => {
     });
     res.json(attempts);
   } catch (error) {
-    console.error('Ошибка получения истории пользователя:', error);
-    res.status(500).json({ error: 'Ошибка при получении истории' });
+    console.error('Error retrieving user history:', error);
+    res.status(500).json({ error: 'Error while getting history' });
   }
 };
 
@@ -79,12 +79,12 @@ exports.getProfile = async (req, res) => {
       attributes: ['id', 'username']
     });
     if (!user) {
-      return res.status(404).json({ error: 'Пользователь не найден' });
+      return res.status(404).json({ error: 'User not found' });
     }
     res.json(user);
   } catch (error) {
-    console.error('Ошибка получения профиля пользователя:', error);
-    res.status(500).json({ error: 'Ошибка при получении профиля' });
+    console.error('Error retrieving user profile:', error);
+    res.status(500).json({ error: 'Error retrieving profile' });
   }
 };
 
@@ -105,8 +105,8 @@ exports.getFavouriteQuizzes = async (req, res) => {
     });
     res.json(quizzes);
   } catch (error) {
-    console.error('Ошибка при загрузке избранных квизов:', error);
-    res.status(500).json({ error: 'Ошибка базы данных' });
+    console.error('Error loading featured quizzes:', error);
+    res.status(500).json({ error: 'Database error' });
   }
 };
 
@@ -126,13 +126,13 @@ exports.deleteFavouriteQuiz = async (req, res) => {
     });
 
     if (deleted) {
-      return res.json({ message: 'Закладка успешно удалена' });
+      return res.json({ message: 'Bookmark successfully removed' });
     } else {
-      return res.status(404).json({ error: 'Закладка не найдена' });
+      return res.status(404).json({ error: 'Bookmark not found' });
     }
   } catch (error) {
-    console.error('Ошибка при удалении закладки:', error);
-    return res.status(500).json({ error: 'Ошибка удаления закладки' });
+    console.error('Error deleting bookmark:', error);
+    return res.status(500).json({ error: 'Error deleting bookmark' });
   }
 };
 
@@ -143,7 +143,7 @@ exports.deleteMultipleFavouriteQuizzes = async (req, res) => {
     const userId = req.user.id; // middleware verifyToken должен установить req.user
 
     if (!Array.isArray(quizIds) || quizIds.length === 0) {
-      return res.status(400).json({ error: 'quizIds должен быть непустым массивом' });
+      return res.status(400).json({ error: 'quizIds must be a non-empty array' });
     }
 
     // Удаляем записи из таблицы UserFavorite для данного пользователя и выбранных квизов
@@ -154,10 +154,10 @@ exports.deleteMultipleFavouriteQuizzes = async (req, res) => {
       }
     });
 
-    return res.json({ message: 'Закладки успешно удалены', deletedCount });
+    return res.json({ message: 'Bookmarks successfully removed', deletedCount });
   } catch (error) {
-    console.error('Ошибка при массовом удалении закладок:', error);
-    return res.status(500).json({ error: 'Ошибка удаления закладок' });
+    console.error('Error when bulk deleting bookmarks:', error);
+    return res.status(500).json({ error: 'Error deleting bookmarks' });
   }
 };
 
@@ -167,7 +167,7 @@ exports.deleteMultipleQuizzes = async (req, res) => {
     const userId = req.user.id; // убедитесь, что JWT middleware устанавливает req.user
 
     if (!Array.isArray(quizIds) || quizIds.length === 0) {
-      return res.status(400).json({ error: 'quizIds должен быть непустым массивом' });
+      return res.status(400).json({ error: 'quizIds must be a non-empty array' });
     }
 
     // Удаляем только квизы, созданные данным пользователем
@@ -178,10 +178,10 @@ exports.deleteMultipleQuizzes = async (req, res) => {
       },
     });
 
-    return res.json({ message: 'Квизы успешно удалены', deletedCount });
+    return res.json({ message: 'Quizzes have been successfully removed.', deletedCount });
   } catch (error) {
-    console.error('Ошибка при bulk‑удалении квизов:', error);
-    return res.status(500).json({ error: 'Ошибка базы данных' });
+    console.error('Error when bulk deleting quizzes:', error);
+    return res.status(500).json({ error: 'Database error' });
   }
 };
 

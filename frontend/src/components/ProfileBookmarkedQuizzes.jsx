@@ -23,8 +23,27 @@ function ProfileBookmarkedQuizzes({ searchTerm, selectedCategories, setSelectedC
   });
   // Состояние для управления выпадающим меню
   const [openDropdownQuizId, setOpenDropdownQuizId] = useState(null);
-  // Состояние режима отображения: 'table' или 'list'
-  const [viewMode, setViewMode] = useState('table');
+  // Флаг мобильного просмотра
+  const [isMobile, setIsMobile] = useState(
+  typeof window !== 'undefined' && window.innerWidth <= 768
+  );
+  // Режим отображения: по умолчанию table на десктопе, list на мобилке
+  const [viewMode, setViewMode] = useState(isMobile ? 'list' : 'table');
+
+  useEffect(() => {
+    const onResize = () => {
+      const mobile = window.innerWidth <= 768;
+        setIsMobile(mobile);
+        setViewMode(mobile ? 'list' : 'table');
+      };
+      // сразу приводим в корректный режим при монтировании
+      onResize();
+      window.addEventListener('resize', onResize);
+      return () => window.removeEventListener('resize', onResize);
+    }, []);
+  
+
+
   // Новый стейт для показа деталей квиза (Detail)
   const [openDetailQuizId, setOpenDetailQuizId] = useState(null);
 
@@ -54,7 +73,7 @@ function ProfileBookmarkedQuizzes({ searchTerm, selectedCategories, setSelectedC
         const decoded = jwtDecode(token);
         setUserId(decoded.id);
       } catch (error) {
-        console.error('Ошибка декодирования токена:', error);
+        console.error('Token decoding error:', error);
       }
     }
   }, []);
@@ -71,7 +90,7 @@ function ProfileBookmarkedQuizzes({ searchTerm, selectedCategories, setSelectedC
           setQuizzes(res.data);
         })
         .catch((error) => {
-          console.error('Ошибка при загрузке избранных квизов:', error);
+          console.error('Error loading featured quizzes:', error);
           toast.error('Error loading favorites');
         });
     }
@@ -138,7 +157,7 @@ function ProfileBookmarkedQuizzes({ searchTerm, selectedCategories, setSelectedC
         setQuizzes((prev) => prev.filter((q) => q.id !== quizId));
       })
       .catch((error) => {
-        console.error('Ошибка при снятии закладки:', error);
+        console.error('Error removing bookmark:', error);
         toast.error('Error removing bookmark');
       });
   };
@@ -148,7 +167,7 @@ function ProfileBookmarkedQuizzes({ searchTerm, selectedCategories, setSelectedC
     if (selectedQuizzes.length === 0) return;
     setConfirmModal({
       isOpen: true,
-      message: 'Вы точно хотите удалить выбранные квизы из закладок?',
+      message: 'Are you sure you want to remove the selected quizzes from your bookmarks?',
       onConfirm: () => {
         const token = localStorage.getItem('accessToken');
         api
@@ -164,7 +183,7 @@ function ProfileBookmarkedQuizzes({ searchTerm, selectedCategories, setSelectedC
             setConfirmModal({ isOpen: false, message: '', onConfirm: null });
           })
           .catch((error) => {
-            console.error('Ошибка при массовом снятии закладок:', error);
+            console.error('Error when bulk removing bookmarks:', error);
             toast.error('Error removing bookmarks');
             setConfirmModal({ isOpen: false, message: '', onConfirm: null });
           });
@@ -196,7 +215,7 @@ function ProfileBookmarkedQuizzes({ searchTerm, selectedCategories, setSelectedC
             />
           </div>
         </td>
-        <td>{shortTitle}</td>
+        <td title={quiz.title}>{shortTitle}</td>
         <td>{quiz.category?.name || 'No Category'}</td>
         <td>{quiz.question_quantity}</td>
         <td>{quiz.creator ? quiz.creator.username : 'Unknown'}</td>
@@ -225,21 +244,26 @@ function ProfileBookmarkedQuizzes({ searchTerm, selectedCategories, setSelectedC
   };
 
   return (
-    <div>
-      {/* Bulk + фильтры */}
+    <div className="profile-created-quizzes">
       <div className="block-container">
         <div className="filters-row">
           <div className="bulk-actions">
-            <button onClick={handleSelectAll}>Select All</button>
+          <button
+  className={allSelected ? 'active' : ''}
+  onClick={handleSelectAll}
+>
+  {allSelected ? 'Deselect All' : 'Select All'}
+</button>
+
             {selectedQuizzes.length > 0 && (
-              <button onClick={handleDeleteSelected}>Remove Selected</button>
+              <button onClick={handleDeleteSelected}>Delete with selected</button>
             )}
           </div>
           <div className="filter-controls">
             <div className="date-sort">
               <label>
-                Date:
                 <select value={dateSort} onChange={(e) => setDateSort(e.target.value)}>
+                  <option>Date</option>
                   <option value="new">New</option>
                   <option value="old">Old</option>
                 </select>
@@ -254,29 +278,30 @@ function ProfileBookmarkedQuizzes({ searchTerm, selectedCategories, setSelectedC
       </div>
 
       {/* View toggle */}
-      <div className="block-container">
-        <div className="filters-row">
-          <div className="view-mode-toggle">
-            <button
-              onClick={() => { setViewMode('table'); setCurrentPage(1); }}
-              className={viewMode === 'table' ? 'active' : ''}
-            >
-              Table View
-            </button>
-            <button
-              onClick={() => { setViewMode('list'); setCurrentPage(1); }}
-              className={viewMode === 'list' ? 'active' : ''}
-            >
-              List View
-            </button>
-          </div>
-        </div>
-      </div>
+      {!isMobile && (
+  <div className="filters-row">
+    <div className="view-mode-toggle">
+      <button
+        onClick={() => { setViewMode('table'); setCurrentPage(1); }}
+        className={viewMode === 'table' ? 'active' : ''}
+      >
+        Table View
+      </button>
+      <button
+        onClick={() => setViewMode('list')}
+        className={viewMode === 'list' ? 'active' : ''}
+      >
+        List View
+      </button>
+    </div>
+  </div>
+)}
+
 
       {/* Отображение квизов */}
-      <div className="block-container quizzes-scrollable">
+      <div className="block-container">
         {viewMode === 'table' ? (
-          <div className="table-wrapper">
+          <div className="table-wrapper scrollable">
             <table className="quizzes-table">
               <thead>
                 <tr>
@@ -316,7 +341,7 @@ function ProfileBookmarkedQuizzes({ searchTerm, selectedCategories, setSelectedC
             )}
           </div>
         ) : (
-          <div className="list-view">
+          <div className="list-view scrollable">
             {sortedQuizzes.length > 0 ? (
               sortedQuizzes.map((quiz) => (
                 <QuizCard
@@ -340,6 +365,8 @@ function ProfileBookmarkedQuizzes({ searchTerm, selectedCategories, setSelectedC
           </div>
         )}
       </div>
+
+      
 
       {/* CategoriesModal */}
       {isCategoriesModalOpen && (

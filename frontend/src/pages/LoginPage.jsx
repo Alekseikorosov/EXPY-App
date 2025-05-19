@@ -1,98 +1,118 @@
-import React, { useState } from 'react';
+import React, { useState} from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from '../utils/axiosInstance';
+import api from '../utils/axiosInstance'; // ваш инстанс с baseURL и интерсепторами
 import '../styles/LoginPage.css';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 function LoginPage() {
   const navigate = useNavigate();
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState(() => localStorage.getItem('loginEmail') || '');
   const [password, setPassword] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  // const [errorMessage, setErrorMessage] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setErrorMessage('');
+    toast.dismiss('');
+
+    // очищаем старые токены/данные
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('tempUserId');
+    localStorage.removeItem('loginEmail'); 
 
     try {
-      const response = await api.post('/auth/login', {
-        email,
-        password
-      });
-      const { accessToken, refreshToken } = response.data;
-      localStorage.setItem('accessToken', accessToken);
-      localStorage.setItem('refreshToken', refreshToken);
+      const response = await api.post('/auth/login', { email, password });
 
-      navigate('/');
-    } catch (error) {
-      console.error('Ошибка при входе:', error);
-      if (error.response && error.response.data && error.response.data.error) {
-        setErrorMessage(error.response.data.error);
+      // если у пользователя включена 2FA — перенаправляем на экран ввода кода
+      if (response.data.twofaRequired) {
+        localStorage.setItem('tempUserId',  response.data.tempUserId); // для 2FA-login
+        localStorage.setItem('loginEmail',   email);                    // на случай нужды
+        navigate('/2fa-login');
       } else {
-        setErrorMessage('Неверные учетные данные или ошибка сервера');
+        // обычный вход: сохраняем оба токена и идём на главную
+        const { accessToken, refreshToken } = response.data;
+        localStorage.setItem('accessToken',  accessToken);
+        localStorage.setItem('refreshToken', refreshToken);
+        navigate('/');
       }
-    }
-  };
+    } 
+    catch (err) {
+        console.error('Error logging in:', err);
+        // ⬇️  СТЕЙТЫ email / password НЕ трогаем → поля остаются заполненными
+        const msg = err.response?.data?.error || 'Incorrect credentials';
+        toast.error(msg);
+        }
+      };
+
+      const toggleShowPassword = () => setShowPassword(prev => !prev);
 
   return (
     <div className="login-container">
       <div className="login-card">
-        <h2 className="login-title">Login</h2>
+        {/* <h2 className="login-title">Sign In</h2> */}
 
-        {errorMessage && (
-          <p className="login-error">{errorMessage}</p>
-        )}
-        
+        {/* {errorMessage && <p className="login-error">{errorMessage}</p>} */}
+
         <form onSubmit={handleSubmit}>
           <div className="login-input-group">
             <label htmlFor="email">Email</label>
-            <input 
-              id="email" 
-              type="text" 
+            <input
+              id="email"
+              type="text"
               placeholder="Enter your email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={e => setEmail(e.target.value)}
             />
           </div>
 
           <div className="login-input-group">
             <label htmlFor="password">Password</label>
-            <input 
-              id="password" 
-              type="password" 
-              placeholder="Enter your password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
+            <div className="password-wrapper">
+              <input
+                id="password"
+                type={showPassword ? 'text' : 'password'}
+                placeholder="Enter your password"
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                autoComplete="current-password"
+              />
+
+              <button
+                type="button"
+                className="eye-button"
+                onClick={toggleShowPassword}
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+              >
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
+              </button>
+            </div>
           </div>
 
           <div className="reset-link">
-            <button 
-              type="button" 
+            <button
+              type="button"
               className="link-button"
-              onClick={() => {
-                navigate('/resetpass');
-              }}
+              onClick={() => navigate('/resetpass')}
             >
               Reset password
             </button>
           </div>
 
-          <button 
-            type="submit" 
-            className="login-button"
-          >
+          <button type="submit" className="login-button">
             Sign In
           </button>
         </form>
 
         <div className="signup-link">
-        <p>Don&apos;t have an account?</p>
-          <button 
-            type="button" 
+          <p>Don’t have an account?</p>
+          <button
+            type="button"
             className="link-button"
-            onClick={() => {
-              navigate('/register');
-            }}
+            onClick={() => navigate('/register')}
           >
             Sign up
           </button>

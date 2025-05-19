@@ -1,36 +1,47 @@
+/* SessionExpiredPage.css */
+
 .session-expired-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    text-align: center;
-    background-color: #f8f8f8;
-    padding: 20px;
-  }
-  
-  .session-expired-container h2 {
-    font-size: 2rem;
-    margin-bottom: 1rem;
-    color: #d32f2f;
-  }
-  
-  .session-expired-container p {
-    font-size: 1.2rem;
-    margin-bottom: 1.5rem;
-    color: #555;
-  }
-  
-  .session-expired-container button {
-    padding: 10px 20px;
-    background-color: #1976d2;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  
-  .session-expired-container button:hover {
-    background-color: #1565c0;
-  }
-  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background: #fff; /* тёмный фон */
+  color: #121212;
+  font-family: 'Segoe UI', sans-serif;
+  padding: 40px;
+  text-align: center;
+}
+
+.session-expired-icon {
+  font-size: 64px;
+  color: #E75E5E;
+  margin-bottom: 20px;
+}
+
+.session-expired-title {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.session-expired-text {
+  font-size: 1.2rem;
+  color: #121212;
+  max-width: 500px;
+  margin-bottom: 2rem;
+}
+
+.session-expired-button {
+  padding: 14px 28px;
+  background-color: #017153;
+  color: #fff;
+  font-size: 1rem;
+  border: none;
+  border-radius: 10px;
+  transition: background-color 0.3s ease;
+}
+
+.session-expired-button:hover {
+  background-color: #026e4a;
+  cursor: pointer;
+}

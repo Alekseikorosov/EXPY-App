@@ -1,114 +1,223 @@
 const speakeasy = require('speakeasy');
 const qrcode = require('qrcode');
-const { User, TwoFactorAuth } = require('../models'); // убедитесь, что пути корректны
+// const TwoFactorAuth = require('../models/TwoFactorAuth');
+const TwoFactorAuth = require('../models/TwoFactorAuth');
+const User= require('../models/User');          // ← добавили
+const crypto = require('crypto');
+const { randomUUID }   = require('crypto');
+const jwt = require('jsonwebtoken');
+const UserRecoveryCode = require('../models/UserRecoveryCode');
+const RefreshToken     = require('../models/RefreshToken');
 
-// Генерация секрета и QR-кода для настройки 2FA
-exports.setupTwoFactor = async (req, res) => {
+exports.setup2fa = async (req, res) => {
     try {
-        // Предполагается, что идентификатор пользователя передается через middleware аутентификации (например, req.user.id)
         const userId = req.user.id;
+        // Генерируем секрет для TOTP
+        const user = await User.findByPk(userId);
+        const email = user?.email || 'user';
 
-        // Генерация секрета, можно добавить имя приложения и email пользователя для наглядности
         const secret = speakeasy.generateSecret({
-            length: 20,
-            name: `MyApp (${req.user.email})`
+        length: 20,
+        name: `EXPY (${email})`,  
+        issuer: 'MyApp'
         });
 
-        // Создаем или обновляем запись TwoFactorAuth для данного пользователя
-        const [twoFactor, created] = await TwoFactorAuth.findOrCreate({
-            where: { user_id: userId },
-            defaults: {
-                secret: secret.base32,
-                enabled: false
-            }
-        });
 
-        if (!created) {
-            // Если запись уже существует, обновляем секрет и сбрасываем статус
-            twoFactor.secret = secret.base32;
-            twoFactor.enabled = false;
-            await twoFactor.save();
+
+        // Ищем существующую запись 2FA
+        let twofaRecord = await TwoFactorAuth.findOne({ where: { user_id: userId } });
+        if (twofaRecord) {
+            twofaRecord.totp_secret = secret.base32;
+            twofaRecord.is_enabled = false;
+            await twofaRecord.save();
+        } else {
+            twofaRecord = await TwoFactorAuth.create({
+                user_id: userId,
+                totp_secret: secret.base32,
+                is_enabled: false
+            });
         }
 
-        // Генерация QR-кода на основе otpauth URL, который можно отобразить в приложении аутентификации
+        // Генерируем QR-код по otpauth URL
         qrcode.toDataURL(secret.otpauth_url, (err, data_url) => {
             if (err) {
-                console.error(err);
-                return res.status(500).json({ message: 'Ошибка генерации QR-кода' });
+                return res.status(500).json({ message: 'Error generating QR code' });
             }
-            // Отправляем клиенту QR-код и секрет (секрет можно не отправлять, если он хранится только на сервере)
-            return res.json({ qrCode: data_url, secret: secret.base32 });
+            res.json({ qrCode: data_url });
         });
     } catch (error) {
         console.error(error);
-        return res.status(500).json({ message: 'Ошибка настройки двухфакторной аутентификации' });
+        res.status(500).json({ message: 'Server error during 2FA setup' });
     }
 };
 
-// Проверка введенного кода из Google Authenticator и активация 2FA
-exports.verifyTwoFactor = async (req, res) => {
+exports.verify2fa = async (req, res) => {
     try {
-        const userId = req.user.id;
         const { token } = req.body;
+        const userId = req.user.id;
 
-        // Находим запись TwoFactorAuth для пользователя
-        const twoFactor = await TwoFactorAuth.findOne({ where: { user_id: userId } });
-        if (!twoFactor) {
-            return res.status(404).json({ message: 'Двухфакторная аутентификация не настроена' });
+        const twofaRecord = await TwoFactorAuth.findOne({ where: { user_id: userId } });
+        if (!twofaRecord) {
+            return res.status(400).json({ message: '2FA setup not initiated' });
         }
 
-        // Верификация кода, с учетом допустимого интервала времени (window)
         const verified = speakeasy.totp.verify({
-            secret: twoFactor.secret,
+            secret: twofaRecord.totp_secret,
             encoding: 'base32',
-            token: token,
+            token,
             window: 1
         });
 
         if (verified) {
-            // Если проверка успешна, помечаем 2FA как включенную
-            twoFactor.enabled = true;
-            await twoFactor.save();
-            return res.json({ message: 'Двухфакторная аутентификация успешно включена' });
+            twofaRecord.status = 'active';
+            await twofaRecord.save();
+
+            return res.json({ verified: true, message: '2FA successfully activated' });
         } else {
-            return res.status(400).json({ message: 'Неверный код' });
+            return res.status(400).json({ verified: false, message: 'Invalid token' });
         }
     } catch (error) {
         console.error(error);
-        return res.status(500).json({ message: 'Ошибка проверки двухфакторной аутентификации' });
+        res.status(500).json({ message: 'Server error during 2FA verification' });
     }
 };
 
-// Отключение 2FA с проверкой введенного кода для дополнительной безопасности
-exports.disableTwoFactor = async (req, res) => {
+exports.disable2fa = async (req, res) => {
     try {
         const userId = req.user.id;
-        const { token } = req.body;
+        const { token } = req.body; // Получаем 6-значный код из req.body
 
-        // Находим запись TwoFactorAuth для пользователя
-        const twoFactor = await TwoFactorAuth.findOne({ where: { user_id: userId } });
-        if (!twoFactor) {
-            return res.status(404).json({ message: 'Двухфакторная аутентификация не настроена' });
+        const twofaRecord = await TwoFactorAuth.findOne({ where: { user_id: userId } });
+        if (!twofaRecord) {
+            return res.status(404).json({ message: '2FA not set up' });
         }
 
-        // Проверяем корректность кода перед отключением
+        // Проверяем введённый код
         const verified = speakeasy.totp.verify({
-            secret: twoFactor.secret,
+            secret: twofaRecord.totp_secret,
             encoding: 'base32',
-            token: token,
+            token,        // код из body
             window: 1
         });
 
         if (!verified) {
-            return res.status(400).json({ message: 'Неверный код' });
+            return res.status(400).json({ message: 'Invalid code' });
         }
 
-        // Отключаем 2FA, можно либо удалить запись, либо обновить флаг
-        twoFactor.enabled = false;
-        await twoFactor.save();
-        return res.json({ message: 'Двухфакторная аутентификация отключена' });
+        // Если проверка верна – отключаем 2FA
+        twofaRecord.status = 'inactive';
+        await twofaRecord.save();
+
+        return res.json({ message: '2FA disabled' });
     } catch (error) {
         console.error(error);
-        return res.status(500).json({ message: 'Ошибка отключения двухфакторной аутентификации' });
+        res.status(500).json({ message: 'Error disabling 2FA' });
     }
 };
+
+exports.get2faStatus = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const twofaRecord = await TwoFactorAuth.findOne({ where: { user_id: userId } });
+        if (!twofaRecord) {
+            return res.json({ status: 'none' }); // пользователь не настраивал 2FA
+        }
+        return res.json({ status: twofaRecord.status });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Error fetching 2FA status' });
+    }
+};
+
+// Генерация recovery code
+exports.generateRecoveryCode = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        // Генерация случайного кода (16 hex-символов, длина 8 байт)
+        const code = crypto.randomBytes(8).toString('hex');
+        // Хэширование кода
+        const codeHash = crypto.createHash('sha256').update(code).digest('hex');
+
+        // Сохраняем в таблицу user_recovery_codes
+        await UserRecoveryCode.create({
+            user_id: userId,
+            code_hash: codeHash,
+            is_used: false
+        });
+
+        // Возвращаем исходный (не захешированный) код пользователю
+        res.json({ code });
+    } catch (error) {
+        console.error('Error generating recovery code:', error);
+        res.status(500).json({ message: 'Error generating recovery code' });
+    }
+};
+
+exports.verifyRecoveryCode = async (req, res) => {
+    const { email, code } = req.body;
+    if (!email || !code) {
+      return res.status(400).json({ message: 'Email and recovery code are required' });
+    }
+  
+    // 1) Находим пользователя
+    const user = await User.findOne({ where: { email } });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+  
+    // 2) Проверяем старый recovery-код
+    const codeHash = crypto.createHash('sha256').update(code).digest('hex');
+    const record = await UserRecoveryCode.findOne({
+      where: {
+        user_id:   user.id,
+        code_hash: codeHash,
+        is_used:   false
+      }
+    });
+    if (!record) {
+      return res.status(400).json({ success: false, message: 'Invalid or expired recovery code' });
+    }
+  
+    // 3) Помечаем его как использованный
+    await record.update({ is_used: true, used_at: new Date() });
+  
+    // 4) Генерируем и сохраняем новый recovery-код
+    const newCode = crypto.randomBytes(8).toString('hex');
+    const newHash = crypto.createHash('sha256').update(newCode).digest('hex');
+    await UserRecoveryCode.create({
+      user_id:   user.id,
+      code_hash: newHash,
+      is_used:   false
+    });
+  
+    // 5) Генерируем access+refresh токены
+    const accessToken  = jwt.sign(
+      { id: user.id, email: user.email, role: user.role, twofaVerified: true },
+      process.env.ACCESS_TOKEN_SECRET,
+      { expiresIn: '15m' }
+    );
+    const refreshToken = jwt.sign(
+      { id: user.id, email: user.email, role: user.role },
+      process.env.REFRESH_TOKEN_SECRET,
+      { expiresIn: '7d', jwtid: randomUUID() }
+    );
+    const { exp, jti } = jwt.decode(refreshToken);
+  
+    await RefreshToken.create({
+      token:     refreshToken,
+      userId:    user.id,
+      jwtid:     jti,
+      expiresAt: new Date(exp * 1000)
+    });
+  
+    // 6) Отдаём новый код вместе с токенами
+    return res.json({ 
+      success:      true,
+      accessToken, 
+      refreshToken, 
+      newCode 
+    });
+  };
+
+
+

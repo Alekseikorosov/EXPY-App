@@ -1,117 +1,10 @@
-// const bcrypt = require('bcrypt');
-// const User = require('../models/User');
-//
-// exports.updateUsername = async (req, res) => {
-//     const { newUsername } = req.body;
-//
-//     if (!newUsername) {
-//         return res.status(400).json({ message: 'Please provide a new username' });
-//     }
-//
-//     // Валидация формата username
-//     const usernameRegex = /^[A-Za-z0-9_.-]{4,13}$/;
-//     if (!usernameRegex.test(newUsername)) {
-//         return res.status(400).json({
-//             message: 'Invalid username format. Only Latin letters, digits, hyphen (-), underscore (_), and period (.) are allowed, and the username must be between 4 and 13 characters long.'
-//         });
-//     }
-//
-//     try {
-//         // middleware verifyToken уже установил req.user
-//         const user = await User.findByPk(req.user.id);
-//         if (!user) {
-//             return res.status(404).json({ message: 'User not found' });
-//         }
-//
-//         // Если в модели предусмотрено поле для даты последнего изменения имени,
-//         // проверяем, что с последнего изменения прошло не менее 14 дней.
-//         if (user.lastUsernameChange) {
-//             const now = new Date();
-//             const lastChange = new Date(user.lastUsernameChange);
-//             const diffDays = (now - lastChange) / (1000 * 60 * 60 * 24);
-//             if (diffDays < 14) {
-//                 return res.status(403).json({ message: 'You cannot change username again within 14 days' });
-//             }
-//         }
-//
-//         // Проверяем, что новый юзернейм не занят
-//         const existingUser = await User.findOne({ where: { username: newUsername } });
-//         if (existingUser) {
-//             return res.status(409).json({ message: 'Username already taken' });
-//         }
-//
-//         // Обновляем юзернейм и, если есть, дату последнего изменения
-//         user.username = newUsername;
-//         if ('lastUsernameChange' in user) {
-//             user.lastUsernameChange = new Date();
-//         }
-//         await user.save();
-//
-//         return res.status(200).json({ message: 'Username updated successfully', username: newUsername });
-//     } catch (error) {
-//         console.error('Error updating username:', error);
-//         return res.status(500).json({ message: 'Server error' });
-//     }
-// };
-//
-// exports.updateEmail = async (req, res) => {
-//     const { newEmail, password } = req.body;
-//
-//     if (!newEmail || !password) {
-//         return res.status(400).json({ message: 'Please provide a new email and your password' });
-//     }
-//
-//     // Валидируем формат email
-//     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-//     if (!emailRegex.test(newEmail)) {
-//         return res.status(400).json({ message: 'Invalid email format' });
-//     }
-//
-//     try {
-//         // Получаем пользователя по ID из токена
-//         const user = await User.findByPk(req.user.id);
-//         if (!user) {
-//             return res.status(404).json({ message: 'User not found' });
-//         }
-//
-//         // Проверяем введённый пароль
-//         const isMatch = await bcrypt.compare(password, user.password);
-//         if (!isMatch) {
-//             return res.status(401).json({ message: 'Incorrect password' });
-//         }
-//
-//         // Проверяем, что новый email не занят
-//         const existingUser = await User.findOne({ where: { email: newEmail } });
-//         if (existingUser) {
-//             return res.status(409).json({ message: 'Email already taken' });
-//         }
-//
-//         // Если в модели есть поле для даты изменения email (например, lastEmailChange),
-//         // можно проверить, что с последнего изменения прошло не менее 30 дней.
-//         if (user.lastEmailChange) {
-//             const now = new Date();
-//             const lastChange = new Date(user.lastEmailChange);
-//             const diffDays = (now - lastChange) / (1000 * 60 * 60 * 24);
-//             if (diffDays < 30) {
-//                 return res.status(403).json({ message: 'You cannot change your email again within 30 days' });
-//             }
-//         }
-//
-//         // Обновляем email (и дату изменения, если такое поле существует)
-//         user.email = newEmail;
-//         if ('lastEmailChange' in user) {
-//             user.lastEmailChange = new Date();
-//         }
-//         await user.save();
-//
-//         return res.status(200).json({ message: 'Email updated successfully', email: newEmail });
-//     } catch (error) {
-//         console.error('Error updating email:', error);
-//         return res.status(500).json({ message: 'Server error' });
-//     }
-// };
+
 const bcrypt = require('bcrypt');
 const User = require('../models/User');
+const RefreshToken = require('../models/RefreshToken');  
+const jwt          = require('jsonwebtoken');
+const sequelize    = require('../config/sequelize');       
+
 
 exports.getAllUsers = async (req, res) => {
     try {
@@ -131,12 +24,12 @@ exports.getAllUsers = async (req, res) => {
       });
       return res.json(users);
     } catch (error) {
-      console.error('Ошибка получения пользователей:', error);
-      return res.status(500).json({ error: 'Ошибка базы данных' });
+      console.error('Error getting users:', error);
+      return res.status(500).json({ error: 'Database error' });
     }
   };
 
-exports.updateUsername = async (req, res) => {
+  exports.updateUsername = async (req, res) => {
     const { newUsername } = req.body;
 
     if (!newUsername) {
@@ -183,6 +76,7 @@ exports.updateUsername = async (req, res) => {
     }
 };
 
+
 exports.updateEmail = async (req, res) => {
     const { newEmail, password } = req.body;
 
@@ -220,13 +114,22 @@ exports.updateEmail = async (req, res) => {
             }
         }
 
-        user.email = newEmail;
-        if ('lastEmailChange' in user) {
-            user.lastEmailChange = new Date();
-        }
-        await user.save();
+       await User.sequelize.transaction(async t => {
 
-        return res.status(200).json({ message: 'Email updated successfully', email: newEmail });
+           await RefreshToken.destroy({ where: { userId: user.id }, transaction: t });
+
+
+           user.email            = newEmail;
+           user.lastEmailChange  = new Date();
+           await user.save({ transaction: t });
+       });
+
+
+       return res.status(200).json({
+           message: 'Email updated successfully. Please log in again.',
+           email: newEmail,
+           forceLogout: true                    
+       });
     } catch (error) {
         console.error('Error updating email:', error);
         return res.status(500).json({ message: 'Server error' });
@@ -272,5 +175,44 @@ exports.updatePassword = async (req, res) => {
     }
 };
 
+exports.confirmPassword = async (req, res) => {
+    const { password } = req.body;
+    if (!password) {
+        return res.status(400).json({ message: 'Password is required' });
+    }
+    try {
+        const user = await User.findByPk(req.user.id);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.status(401).json({ verified: false, message: 'Incorrect password' });
+        }
+        return res.json({ verified: true });
+    } catch (error) {
+        console.error('Error confirming password:', error);
+        return res.status(500).json({ message: 'Server error' });
+    }
+};
 
+exports.getProfile = async (req, res) => {
+    try {
+      const user = await User.findByPk(req.user.id, {
+        attributes: ['username', 'email', 'lastUsernameChange', 'lastEmailChange']
+      });
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+        res.json({
+            username:            user.username,
+            email:               user.email,
+            lastUsernameChange:  user.lastUsernameChange,   // ← добавили
+            lastEmailChange:     user.lastEmailChange       // ← добавили
+        });
+    } catch (err) {
+      console.error('Error getting profile:', err);
+      res.status(500).json({ message: 'Internal Server Error' });
+    }
+  };
 

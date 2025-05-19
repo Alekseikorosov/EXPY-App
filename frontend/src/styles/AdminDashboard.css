@@ -16,3 +16,171 @@
     transition: none !important;
   }
   
+
+ /* ==== Респонсив для AdminDashboard ==== */
+
+/* Планшеты и ниже */
+@media (max-width: 1024px) {
+  .selectable-table {
+    width: 100%;
+    overflow-x: auto;
+  }
+  .dashboard-header,
+  .controls-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+}
+
+/* Мобильники */
+@media (max-width: 768px) {
+  .selectable-table .ant-table-thead th,
+  .selectable-table .ant-table-tbody td {
+    padding: 6px !important;
+    font-size: 0.85rem;
+  }
+  .dashboard-panel {
+    padding: 12px 8px;
+  }
+}
+
+/* Очень маленькие экраны */
+@media (max-width: 480px) {
+  .dashboard-title {
+    font-size: 1.4rem;
+  }
+  .ant-pagination {
+    font-size: 0.75rem;
+  }
+}
+
+
+
+/* === Унифицированный контейнер пагинации === */
+.pagination-container {
+  display: flex;
+  justify-content: center;      /* центрирование */
+  align-items: center;
+  flex-wrap: wrap;              /* адаптивность */
+  gap: 8px;                     /* расстояние между кнопками */
+  margin: 24px 0;               /* внешние отступы сверху и снизу */
+  padding: 0;                   /* сброс для согласованности */
+}
+
+/* === Унифицированные кнопки пагинации === */
+.pagination-container button {
+  min-width: 36px;              /* одинаковая ширина */
+  height: 36px;                 /* одинаковая высота */
+  padding: 0;                   /* сброс внутренних отступов */
+  border: 2px solid transparent;/* тонкая рамка для анимации */
+  background: #F9FAFB;          /* нейтральный фон */
+  border-radius: 6px;           /* скругленные углы */
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s, border-color 0.2s, transform 0.1s;
+}
+
+/* Hover-эффект */
+.pagination-container button:hover {
+  background-color: #E5E7EB;
+  transform: translateY(-1px);
+}
+
+/* Кнопка активной страницы */
+.pagination-container button.active-page {
+  background-color: #309F8E;
+  border-color: #309F8E;
+  color: #FFFFFF;
+  transform: none;
+}
+
+/* Деактивированные кнопки (например, стрелки в начале/конце) */
+.pagination-container button:disabled {
+  opacity: 0.5;
+  cursor: default;
+  transform: none;
+}
+
+
+/* В AdminDashboard.css */
+
+/* 0) Контейнер таблицы — всегда растягиваем на 100% и включаем прокрутку */
+.selectable-table .ant-table-container {
+  width: 100%;
+  overflow-x: auto;
+}
+
+/* 1) Фиксируем макет ячеек, чтобы text-overflow работал */
+.selectable-table .ant-table {
+  table-layout: fixed;
+}
+
+/* 2) Обрезка длинных значений */
+.selectable-table .ant-table-cell {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 3) На очень узких экранах — разрешаем перенос слов */
+@media (max-width: 480px) {
+  .selectable-table .ant-table-cell {
+    white-space: normal;
+    word-break: break-word;
+  }
+}
+
+
+/* Контейнер с прокруткой на крайний случай, но сам table будет в 100% */
+.selectable-table .ant-table-container {
+  width: 100%;
+  overflow-x: auto; /* если уж совсем узко — включится скролл */
+}
+
+/* Сам AntD-таблица и внутренний <table> — под 100% и с автоматическим layout */
+.selectable-table .ant-table,
+.selectable-table .ant-table table {
+  width: 100%;
+  table-layout: auto;  /* НЕ fixed */
+}
+
+/* Можно оставить обрезку, чтобы очень длинный текст не разрывал верстку */
+.selectable-table .ant-table-cell {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
+/* Адаптация таблицы для экранов 350px–590px */
+@media (max-width: 590px) {
+  .selectable-table .ant-table-thead th,
+  .selectable-table .ant-table-tbody td {
+    padding: 4px !important;
+    font-size: 0.75rem;
+  }
+
+  .selectable-table .ant-table-cell {
+    white-space: normal;
+    word-break: break-word;
+  }
+
+  .dashboard-panel {
+    padding: 8px 6px;
+  }
+
+  .ant-pagination {
+    font-size: 0.7rem;
+  }
+
+  .selectable-table .ant-table {
+    table-layout: auto; /* чтобы адаптировалась под содержимое */
+  }
+
+  .selectable-table .ant-table-container {
+    overflow-x: auto; /* горизонтальный скролл при необходимости */
+  }
+}
+

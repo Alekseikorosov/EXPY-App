@@ -1,0 +1,185 @@
+/* 👁 расположение кнопки-глазка */
+.eye-group {
+    position: relative;
+  }
+  
+  .eye-btn {
+    position: absolute;
+    right: 10px;
+    top: 34px;       /* подгоните при необходимости */
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.1rem;
+    color: #666;
+  }
+  
+  .eye-btn:focus {
+    outline: none;
+  }
+  /* 1. сама обёртка вокруг <input> + кнопки */
+.input-wrapper {
+    position: relative;
+    max-width: 400px;        /* ➊ теперь потомкам можно absolute */
+  }
+  
+
+
+
+  /* 2. кнопка-глаз внутри неё */
+  .input-wrapper .eye-btn {
+    position: absolute;
+    right: 10px;
+    top: 50%;                  /* ➋ ровно по центру высоты input */
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.1rem;
+    color: #666;
+  }
+  
+  .input-wrapper .eye-btn:focus { outline: none; }
+  
+
+  .setting-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem; /* по необходимости */
+}
+
+/* в конце файла Security.css */
+.setting-section .back-btn {
+  display: block;      /* чтобы была на отдельной строке */
+  margin-top: 0.5rem;  /* отступ над кнопкой */
+}
+
+
+/* Центрируем и ограничиваем ширину всей секции */
+.recovery-section {
+  max-width: 420px;
+  margin: 0 auto 1.5rem;
+  text-align: center;
+}
+
+/* Текст под заголовком */
+.recovery-info {
+  font-size: 0.95rem;
+  color: #555;
+  margin-bottom: 1rem;
+  line-height: 1.4;
+}
+
+/* Бокс с Recovery code */
+.recovery-code-box {
+  display: inline-block;
+  background: #f9f9f9;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 0.75rem 1rem;
+  font-family: monospace;
+  font-size: 1rem;
+  letter-spacing: 1px;
+  margin-bottom: 0.5rem;
+}
+
+/* Лейбл «copy code» под боксом */
+.copy-inline-btn {
+  background: none;
+  border: none;
+  font-size: 0.875rem;
+  color: #888;
+  text-transform: lowercase;
+  cursor: pointer;
+  margin-bottom: 1rem;
+}
+.copy-inline-btn:hover {
+  color: #333;
+  text-decoration: underline;
+}
+
+/* Стилизация основного Continue */
+.continue-btn {
+  display: block;
+  width: 65%;
+  padding: 0.75rem;
+  border: none;
+  border-radius: 5px;
+  background-color: #333;
+  color: #fff;
+  font-size: 1rem;
+  cursor: pointer;
+  margin: 0 auto 0.75rem;
+}
+.continue-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* Кнопка-стрелка «Back» */
+.back-btn {
+  background: none;
+  border: none;
+  font-size: 0.875rem;
+  color: #888;
+  cursor: pointer;
+}
+.back-btn:hover {
+  color: #333;
+}
+
+
+/* flex-контейнер для заголовка + действия */
+.setting-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+/* группа статуса + кнопки */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* стиль для «pill»-статуса */
+.status-pill {
+  display: inline-block;
+  font-size: 0.75rem;
+  text-transform: lowercase;
+  font-weight: 500;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+}
+
+/* зелёный фон и текст для активного */
+.status-active {
+  background-color: #e6f6ea;
+  color: #2ec776;
+}
+
+/* кнопка disable / enable */
+.disable-btn {
+  background: none;
+  border: 1px solid #444;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  text-transform: lowercase;
+  color: #444;
+  cursor: pointer;
+}
+.disable-btn:hover {
+  background: #f5f5f5;
+}
+
+
+/* Скрываем блок Two-Factor Authentication на мобильных экранах */
+@media (max-width: 768px) {
+  .setting-section2f{
+    display: none !important;
+  }
+}

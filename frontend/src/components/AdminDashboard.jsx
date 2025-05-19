@@ -16,6 +16,7 @@ import axios from '../utils/axiosInstance';
 import CategoriesModal from './CategoriesModal';
 import '../styles/AdminDashboard.css';
 
+
 const { Text } = Typography;
 
 const AdminDashboard = ({ searchTerm = '' }) => {
@@ -166,7 +167,10 @@ const AdminDashboard = ({ searchTerm = '' }) => {
       title: 'Title',
       dataIndex: 'title',
       key: 'title',
-      sorter: (a, b) => a.title.localeCompare(b.title)
+      sorter: (a, b) => a.title.localeCompare(b.title),
+   ellipsis: {           // <–– включаем обрезку и тултип
+     showTitle: true     // showTitle: true добавит стандартный HTML-title
+   },
     },
     {
       title: 'Category',
@@ -368,60 +372,62 @@ const AdminDashboard = ({ searchTerm = '' }) => {
   return (
     <div style={{ padding: 16 }}>
       {contextHolder}
+      <div style={{ overflowX: 'auto', width: '100%' }}>
+      <Space
+  style={{
+    width: '100%',
+    marginBottom: 16,
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    flexWrap: 'wrap'
+  }}
+>
+  {/* ← Левая часть: переключатель Quizzes/Users */}
+  <Space>
+    <Text
+      strong
+      style={{ cursor: 'pointer', color: view === 'quizzes' ? '#1890ff' : undefined }}
+      onClick={() => setView('quizzes')}
+    >
+      Quizzes
+    </Text>
+    <Text
+      strong
+      style={{ cursor: 'pointer', color: view === 'users' ? '#1890ff' : undefined }}
+      onClick={() => setView('users')}
+    >
+      Users
+    </Text>
+  </Space>
 
-      {/* ─── верхняя панель действий ─────────────────────────────── */}
-      <Space style={{ marginBottom: 16, flexWrap: 'wrap' }}>
-        {/* переключатель «Quizzes / Users» */}
-        <Text
-          strong
-          style={{ cursor: 'pointer', color: view === 'quizzes' ? '#1890ff' : undefined }}
-          onClick={() => setView('quizzes')}
-        >
-          Quizzes
-        </Text>
-        <Text
-          strong
-          style={{ cursor: 'pointer', color: view === 'users' ? '#1890ff' : undefined }}
-          onClick={() => setView('users')}
-        >
-          Users
-        </Text>
-
-        {/* фильтр-кнопки категорий (только для Quizzes) */}
-          {view === 'quizzes' && (
-    <>
+  {/* → Правая часть: здесь всегда будет кнопка справа */}
+  {view === 'quizzes' && (
+    <Space>
       <Button onClick={() => setIsCatModalOpen(true)}>Categories</Button>
       {selectedCategories.length > 0 && (
-        <Button onClick={() => setSelectedCategories([])}>
-          Clear&nbsp;categories
-        </Button>
+        <Button onClick={() => setSelectedCategories([])}>Clear categories</Button>
       )}
-    </>
-  )}
-      </Space>
-
-      {/* bulk-удаление */}
-      {view === 'quizzes' && selectedQuizKeys.length > 0 && (
-        <Button
-          type="primary"
-          danger
-          style={{ marginBottom: 8 }}
-          onClick={handleBulkDeleteQuizzes}
-        >
+      {selectedQuizKeys.length > 0 && (
+        <Button type="primary" danger onClick={handleBulkDeleteQuizzes}>
           Delete selected ({selectedQuizKeys.length})
         </Button>
       )}
+    </Space>
+  )}
+  {view === 'users' && selectedUserKeys.length > 0 && (
+    <Space>
+      <Button type="primary" danger onClick={handleBulkDeleteUsers}>
+        Delete selected ({selectedUserKeys.length})
+      </Button>
+    </Space>
+  )}
+</Space>
 
-      {view === 'users' && selectedUserKeys.length > 0 && (
-        <Button
-          type="primary"
-          danger
-          style={{ marginBottom: 8 }}
-          onClick={handleBulkDeleteUsers}
-        >
-          Delete selected ({selectedUserKeys.length})
-        </Button>
-      )}
+
+{/* ──────────────────────────────────────────────────────────── */}
+
+  
 
       {/* таблица данных */}
       <Table
@@ -430,17 +436,22 @@ const AdminDashboard = ({ searchTerm = '' }) => {
         dataSource={data}
         rowKey="id"
         loading={view === 'quizzes' ? loadingQuizzes : loadingUsers}
-        pagination={{
-          current: view === 'quizzes' ? quizPage : 1,
+        pagination={
+          view === 'quizzes'
+          ? {
+          current: quizPage,
           pageSize: PAGE_SIZE,
-          total: view === 'quizzes' ? quizTotal : data.length,
-          onChange: page => view === 'quizzes' && fetchQuizzes(page)
-        }}
+          total: quizTotal,
+          onChange: fetchQuizzes
+          }
+          : { pageSize: PAGE_SIZE }
+          }
         rowSelection={rowSelection}
         onRow={onRow}
         scroll={{ x: 'max-content' }}
         locale={{ emptyText: <span>No data</span> }}
       />
+    </div>
 
       {/* модалка выбора категорий */}
       {view === 'quizzes' && (

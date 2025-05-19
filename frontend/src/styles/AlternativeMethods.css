@@ -1,0 +1,42 @@
+.alternative-container {
+    margin: 60px auto;
+    max-width: 500px;
+    padding: 0 20px;
+    font-family: Arial, sans-serif;
+    color: #333;
+}
+
+.alternative-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+/* Строки с методами входа */
+.method-line {
+    border-bottom: 1px solid #ccc;
+    padding: 10px 0;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.method-line:hover {
+    color: #5ba297; /* При желании можно изменить цвет при наведении */
+}
+
+/* Кнопка Back */
+.back-btn {
+    background: none;
+    border: none;
+    color: #000;
+    font-size: 1rem;
+    font-weight: 600;
+    margin-top: 30px;
+    cursor: pointer;
+    text-decoration: underline;
+    padding: 0;
+}
+
+.back-btn:hover {
+    color: #555; /* При наведении чуть меняем цвет */
+}

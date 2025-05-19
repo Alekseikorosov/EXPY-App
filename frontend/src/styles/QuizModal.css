@@ -1,54 +1,227 @@
+/* src/styles/QuizModal.css */
+
 .quiz-modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0,0,0,0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.quiz-modal-content {
+  background: #fff;
+  border-radius: 16px;
+  padding: 24px;
+  max-width: 650px;
+  width: 90%;
+  position: relative;
+  text-align: center;
+  transform: scale(0.9);
+  opacity: 0;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.quiz-modal-overlay.show .quiz-modal-content {
+  transform: scale(1);
+  opacity: 1;
+}
+
+.quiz-modal-close {
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  background: none;
+  border: none;
+  font-size: 2rem;
+  color: #999;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.quiz-modal-close:hover {
+  color: #333;
+}
+
+.quiz-modal-title {
+  text-align: left;
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: #2ca192;
+}
+
+.quiz-modal-image-wrapper {
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  background: #eee;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.quiz-modal-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.quiz-modal-image-placeholder {
+  width: 100%;
+  height: 100%;
+  font-size: 1.2rem;
+  color: #aaa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.quiz-modal-info-row {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.quiz-modal-info-card {
+  flex: 1 1 22%;
+  min-width: 120px;
+  border: 2px solid #2ca192;
+  border-radius: 8px;
+  padding: 12px;
+  text-align: center;
+}
+
+.quiz-modal-info-card h4 {
+  margin: 0 0 8px;
+  font-size: 1rem;
+  color: #2ca192;
+}
+
+.quiz-modal-info-card p {
+  margin: 0;
+  font-size: 1rem;
+  color: #333;
+  font-weight: 600;
+}
+
+.quiz-modal-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.quiz-modal-favorite-icon {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+/* ==== Pop-анимация для закладки ==== */
+@keyframes pop {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.4); }
+  100% { transform: scale(1); }
+}
+
+.animate-bookmark svg {
+  animation: pop 0.4s ease-out;
+}
+
+.quiz-modal-start-button {
+  flex-grow: 1;
+  padding: 12px 20px;
+  font-size: 1.2rem;
+  background: #2ca192;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.quiz-modal-start-button:hover {
+  background: #249b86;
+}
+
+/* Адаптив */
+@media (max-width: 600px) {
+  .quiz-modal-info-row {
+    flex-direction: column;
+    align-items: stretch;
   }
-  
+  .quiz-modal-info-card {
+    width: 100%;
+  }
+}
+
+
+.quiz-modal-content {
+  /* чтобы у потомков всё, что выходит за пределы, пряталось */
+  overflow: hidden;
+}
+
+.quiz-modal-title {
+  /* позволяем очень длинным «словам» (без пробелов) переноситься */
+  overflow-wrap: anywhere;
+  word-break: break-all;
+
+  /* (опционально) если нужно показывать многоточие, а не переносить:
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  */
+}
+
+
+@media (max-width: 575px) {
   .quiz-modal-content {
-    background: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    max-width: 500px;
-    width: 90%;
-    position: relative;
-  }
-  
-  .quiz-modal-close {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    border: none;
-    background: transparent;
-    font-size: 1.5rem;
-    cursor: pointer;
-  }
-  
-  .quiz-modal-cover img {
-    max-width: 100%;
-    display: block;
-    margin-bottom: 15px;
-  }
-  
-  .quiz-modal-actions {
-    margin-top: 20px;
+    width: 100% !important;
+    max-width: none;
+    height: 100vh;
+    border-radius: 0;
+    padding: 24px 16px 0; /* убираем нижний паддинг, чтобы контент не прятался за кнопками */
     display: flex;
-    align-items: center;
-    justify-content: space-between;
+    flex-direction: column;
+    overflow-y: auto;
+    background: #fff;
   }
-  
-  .quiz-modal-start-button {
-    padding: 10px 20px;
-    background-color: #007bff;
-    border: none;
-    color: white;
-    border-radius: 4px;
-    cursor: pointer;
+
+  .quiz-modal-close {
+    top: 16px;
+    right: 16px;
   }
-  
+
+  .quiz-modal-info-row {
+    margin-bottom: 16px;
+  }
+
+  .quiz-modal-actions {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 12px 16px;
+    background: #fff;
+    box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    gap: 12px;
+    z-index: 1001;
+  }
+
+  /* Чтобы контент не уходил за кнопки */
+  .quiz-modal-content {
+    padding-bottom: calc( (12px * 2) + 48px ); /* 12px сверху + 12px снизу + ~height кнопки (48px) */
+  }
+}

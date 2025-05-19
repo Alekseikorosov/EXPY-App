@@ -1,106 +1,60 @@
-// // frontend/src/utils/axiosInstance.js
-// import axios from 'axios';
-
-// const instance = axios.create({
-//   baseURL: 'http://localhost:5000/api',
-// });
-
-// // Добавляем interceptor на ответы
-// instance.interceptors.response.use(
-//   (response) => {
-//     return response;
-//   },
-//   async (error) => {
-//     const originalRequest = error.config;
-//     if (
-//       error.response &&
-//       (error.response.status === 401 || error.response.status === 403) &&
-//       !originalRequest._retry
-//     ) {
-//       originalRequest._retry = true;
-//       try {
-//         // Пытаемся обновить accessToken
-//         const refreshToken = localStorage.getItem('refreshToken');
-//         if (!refreshToken) {
-//           // Нет refreshToken – значит всё, logout
-//           throw new Error('No refresh token');
-//         }
-//         // Запрос на /auth/token
-//         const refreshRes = await axios.post('http://localhost:5000/api/auth/token', {
-//           refreshToken,
-//         });
-//         const newAccessToken = refreshRes.data.accessToken;
-//         localStorage.setItem('accessToken', newAccessToken);
-
-//         // Попробуем повторить запрос
-//         originalRequest.headers['Authorization'] = 'Bearer ' + newAccessToken;
-//         return instance(originalRequest);
-//       } catch (err) {
-//         // Не удалось рефрешить → logout
-//         localStorage.removeItem('accessToken');
-//         localStorage.removeItem('refreshToken');
-//         window.location.href = '/login'; 
-//         return Promise.reject(error);
-//       }
-//     }
-//     return Promise.reject(error);
-//   }
-// );
-
-// export default instance;
+// frontend/src/utils/axiosInstance.js
 import axios from 'axios';
 
-const instance = axios.create({
+// Создаём общий инстанс с базовым URL
+const api = axios.create({
+  // baseURL: '/api', СЕРВЕР!!!
   baseURL: 'http://localhost:5000/api',
+
 });
 
-// Интерцептор для запросов — автоматически добавляем токен, если он есть
-instance.interceptors.request.use(
-  (config) => {
-    const accessToken = localStorage.getItem('accessToken');
-    if (accessToken) {
-      config.headers['Authorization'] = 'Bearer ' + accessToken;
-    }
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
+// ⬆️ В каждый запрос подставляем access‑токен, если он есть
+api.interceptors.request.use(config => {
+  const token = localStorage.getItem('accessToken');
+  if (token) config.headers['Authorization'] = `Bearer ${token}`;
+  return config;
+});
 
-// Интерцептор для ответов — обработка ошибок, связанных с истечением токена
-instance.interceptors.response.use(
-  (response) => {
-    return response;
-  },
-  async (error) => {
-    const originalRequest = error.config;
-    if (
-      error.response &&
-      (error.response.status === 401 || error.response.status === 403) &&
-      !originalRequest._retry
-    ) {
-      originalRequest._retry = true;
+// ⬇️ Ответы: авто‑refresh токена, но игнорируем сам /auth/login
+api.interceptors.response.use(
+  res => res,
+  async err => {
+    const orig   = err.config;
+    const status = err.response?.status;
+
+    // 👉 Не трогаем ошибки самого логина, чтобы не стирать email
+    const isAuthLogin = orig?.url?.includes('/auth/login');
+
+    if ((status === 401 || status === 403) && !orig._retry && !isAuthLogin) {
+      orig._retry = true;
+
+      const refreshToken = localStorage.getItem('refreshToken');
+      if (!refreshToken) {
+        // нет refresh → выходим в логин
+        localStorage.clear();
+        window.location.href = '/login';
+        return Promise.reject(err);
+      }
+
       try {
-        // Пытаемся обновить accessToken
-        const refreshToken = localStorage.getItem('refreshToken');
-        if (!refreshToken) {
-          throw new Error('No refresh token');
-        }
-        const refreshRes = await axios.post('http://localhost:5000/api/auth/token', {
-          refreshToken,
-        });
-        const newAccessToken = refreshRes.data.accessToken;
-        localStorage.setItem('accessToken', newAccessToken);
-        originalRequest.headers['Authorization'] = 'Bearer ' + newAccessToken;
-        return instance(originalRequest);
-      } catch (err) {
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
-        window.location.href = '/login'; 
-        return Promise.reject(error);
+        // Запрашиваем новый access
+        const { data } = await api.post('/auth/token', { refreshToken });
+        localStorage.setItem('accessToken', data.accessToken);
+
+        // подставляем в оригинальный запрос и повторяем
+        orig.headers['Authorization'] = `Bearer ${data.accessToken}`;
+        return api(orig);
+      } catch {
+        // refresh тоже не прокатил → полный logout
+        localStorage.clear();
+        window.location.href = '/login';
+        return Promise.reject(err);
       }
     }
-    return Promise.reject(error);
+
+    // Все остальные ошибки прокидываем как есть
+    return Promise.reject(err);
   }
 );
 
-export default instance;
+export default api;

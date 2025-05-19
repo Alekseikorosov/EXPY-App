@@ -1,7 +1,11 @@
 import React, { useState, useRef } from 'react';
-import axios from 'axios';
+import axios from '../utils/axiosInstance';
 import { useNavigate } from 'react-router-dom';
 import '../styles/ResetPassPage.css';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+
 
 function ResetPassPage() {
     const navigate = useNavigate();
@@ -13,8 +17,8 @@ function ResetPassPage() {
 
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
-    const [errorMessage, setErrorMessage] = useState('');
-    const [successMessage, setSuccessMessage] = useState('');
+    // const [errorMessage, setErrorMessage] = useState('');
+    // const [successMessage, setSuccessMessage] = useState('');
     // step: 1 — ввод email, 2 — подтверждение кода, 3 — ввод нового пароля
     const [step, setStep] = useState(1);
     const [resendDisabled, setResendDisabled] = useState(false);
@@ -44,19 +48,19 @@ function ResetPassPage() {
     // ======== 1. Отправка email для получения кода ========
     const handleEmailSubmit = async (e) => {
         e.preventDefault();
-        setErrorMessage('');
-        setSuccessMessage('');
+        // setErrorMessage('');
+        // setSuccessMessage('');
         try {
-            const response = await axios.post('http://localhost:5000/api/auth/resetpass', { email });
-            setSuccessMessage(response.data.message || 'Код подтверждения успешно отправлен на вашу почту!');
+            const response = await axios.post('/auth/resetpass', { email });
+            toast.success(response.data.message || 'Код подтверждения успешно отправлен на вашу почту!');
             setStep(2);
             startCountdown(10);
         } catch (error) {
-            console.error('Ошибка при отправке кода:', error);
+            console.error('Error sending code:', error);
             if (error.response && error.response.data && error.response.data.error) {
-                setErrorMessage(error.response.data.error);
+                toast.error(error.response.data.error);
             } else {
-                setErrorMessage('Произошла ошибка при отправке кода.');
+                toast.error('There was an error sending the code.');
             }
         }
     };
@@ -64,30 +68,30 @@ function ResetPassPage() {
     // ======== 2. Подтверждение кода ========
     const handleCodeConfirm = async (e) => {
         e.preventDefault();
-        setErrorMessage('');
-        setSuccessMessage('');
+        // setErrorMessage('');
+        // setSuccessMessage('');
 
         // Склеиваем массив в одну строку
         const confirmationCode = codeDigits.join('');
         if (confirmationCode.length < 6) {
-            setErrorMessage('Пожалуйста, введите 6-значный код.');
+            toast.error('Please enter the 6-digit code.');
             return;
         }
 
         try {
             // Пример вызова проверки кода на сервере
-            const response = await axios.post('http://localhost:5000/api/auth/verify-code', {
+            const response = await axios.post('/auth/verify-code', {
                 email,
                 confirmationCode
             });
-            setSuccessMessage(response.data.message || 'Код успешно подтвержден!');
+            toast.success(response.data.message || 'Code successfully verified!');
             setStep(3);
         } catch (error) {
-            console.error('Ошибка при подтверждении кода:', error);
+            console.error('Error confirming code:', error);
             if (error.response && error.response.data && error.response.data.error) {
-                setErrorMessage(error.response.data.error);
+                toast.error(error.response.data.error);
             } else {
-                setErrorMessage('Произошла ошибка при подтверждении кода.');
+                toast.error('There was an error confirming the code.');
             }
         }
     };
@@ -95,58 +99,58 @@ function ResetPassPage() {
     // ======== 3. Смена пароля ========
     const handleNewPasswordSubmit = async (e) => {
         e.preventDefault();
-        setErrorMessage('');
-        setSuccessMessage('');
+        // setErrorMessage('');
+        // setSuccessMessage('');
 
         const passwordRegex = /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}$/;
         if (!passwordRegex.test(newPassword)) {
-            setErrorMessage(
-                'Пароль должен быть не короче 8 символов и содержать ' +
-                'строчные, заглавные буквы, цифры и спецсимвол из !@#$%^&*.'
+            toast.error(
+                'The password must be at least 8 characters long and contain ' +
+'lowercase, uppercase letters, numbers and the special character !@#$%^&*.'
             );
             return;
         }
         if (newPassword !== confirmPassword) {
-            setErrorMessage('Пароли не совпадают.');
+            toast.error('The passwords do not match.');
             return;
         }
 
         try {
             // Для смены пароля тоже нужен код
             const confirmationCode = codeDigits.join('');
-            const response = await axios.post('http://localhost:5000/api/auth/update-password', {
+            const response = await axios.post('/auth/update-password', {
                 email,
                 confirmationCode,
                 newPassword
             });
-            setSuccessMessage(response.data.message || 'Пароль успешно обновлен!');
+            toast.success(response.data.message || 'Password updated successfully!');
             setTimeout(() => {
                 navigate('/login');
             }, 2000);
         } catch (error) {
-            console.error('Ошибка при обновлении пароля:', error);
+            console.error('Error updating password:', error);
             if (error.response && error.response.data && error.response.data.error) {
-                setErrorMessage(error.response.data.error);
+                toast.error(error.response.data.error);
             } else {
-                setErrorMessage('Произошла ошибка при обновлении пароля.');
+                toast.error('There was an error updating your password.');
             }
         }
     };
 
     // ======== Повторная отправка кода ========
     const handleResendCode = async () => {
-        setErrorMessage('');
-        setSuccessMessage('');
+        // setErrorMessage('');
+        // setSuccessMessage('');
         try {
-            const response = await axios.post('http://localhost:5000/api/auth/resetpass', { email });
-            setSuccessMessage(response.data.message || 'Код подтверждения повторно отправлен на вашу почту!');
+            const response = await axios.post('/auth/resetpass', { email });
+            toast.success(response.data.message || 'The confirmation code has been re-sent to your email!');
             startCountdown(120);
         } catch (error) {
-            console.error('Ошибка при повторной отправке кода:', error);
+            console.error('Error resending code:', error);
             if (error.response && error.response.data && error.response.data.error) {
-                setErrorMessage(error.response.data.error);
+                toast.error(error.response.data.error);
             } else {
-                setErrorMessage('Произошла ошибка при повторной отправке кода.');
+                toast.error('There was an error resending the code.');
             }
         }
     };
@@ -195,10 +199,20 @@ function ResetPassPage() {
 
     return (
         <div className="resetpass-container">
+            <ToastContainer
+                position="top-right"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                />
+
             <div className="resetpass-card">
-                <h2 className="resetpass-title">Восстановление пароля</h2>
-                {errorMessage && <p className="resetpass-error">{errorMessage}</p>}
-                {successMessage && <p className="resetpass-success">{successMessage}</p>}
+                <h2 className="resetpass-title">Reset Password</h2>
 
                 {/* Шаг 1: Ввод email */}
                 {step === 1 && (
@@ -208,7 +222,7 @@ function ResetPassPage() {
                             <input
                                 id="email"
                                 type="email"
-                                placeholder="Введите ваш email"
+                                placeholder="Enter your email"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 required
@@ -222,7 +236,7 @@ function ResetPassPage() {
                 {step === 2 && (
                     <>
                         <form onSubmit={handleCodeConfirm}>
-                            <p>Введите 6-значный код из письма:</p>
+                            <p>Enter the 6-digit code fron the mail:</p>
                             <div className="resetpass-code-container">
                                 {codeDigits.map((digit, idx) => (
                                     <input
@@ -249,8 +263,8 @@ function ResetPassPage() {
                             disabled={resendDisabled}
                         >
                             {resendDisabled
-                                ? `Отправить код еще раз (${resendCountdown})`
-                                : 'Отправить код еще раз'}
+                                ? `Send code again (${resendCountdown})`
+                                : 'Send code again'}
                         </button>
                     </>
                 )}
@@ -259,22 +273,22 @@ function ResetPassPage() {
                 {step === 3 && (
                     <form onSubmit={handleNewPasswordSubmit}>
                         <div className="resetpass-input-group">
-                            <label htmlFor="newPassword">Новый пароль</label>
+                            <label htmlFor="newPassword">New Password</label>
                             <input
                                 id="newPassword"
                                 type="password"
-                                placeholder="Введите новый пароль"
+                                placeholder="Enter new password"
                                 value={newPassword}
                                 onChange={(e) => setNewPassword(e.target.value)}
                                 required
                             />
                         </div>
                         <div className="resetpass-input-group">
-                            <label htmlFor="confirmPassword">Подтвердите новый пароль</label>
+                            <label htmlFor="confirmPassword">Confirm new password</label>
                             <input
                                 id="confirmPassword"
                                 type="password"
-                                placeholder="Подтвердите новый пароль"
+                                placeholder="Confirm new password"
                                 value={confirmPassword}
                                 onChange={(e) => setConfirmPassword(e.target.value)}
                                 required

@@ -1,40 +1,70 @@
 // src/pages/HomePage.jsx
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { jwtDecode } from 'jwt-decode';
+// import { jwtDecode } from 'jwt-decode';
 import api from '../utils/axiosInstance';
 import Header from '../components/Header';
 import CategoriesModal from '../components/CategoriesModal';
 import QuizModal from '../components/QuizModal';
+// import ownerIcon from '../assets/owner.png';
 import '../styles/HomePage.css';
+import 'particles.js';
+import infoIcon from '../assets/info.png';
+
+
+
+
 
 function HomePage() {
   const navigate = useNavigate();
 
   // ———————————— текущий пользователь (для бейджа автора)
-  const [currentUserId, setCurrentUserId] = useState(null);
+  // const [currentUserId, setCurrentUserId] = useState(null);
+  // useEffect(() => {
+  //   const token = localStorage.getItem('accessToken');
+  //   if (token) {
+  //     try {
+  //       const { id } = jwtDecode(token);
+  //       setCurrentUserId(id);
+  //     } catch {
+  //       console.warn('Invalid token');
+  //     }
+  //   }
+  // }, []);
+
+
   useEffect(() => {
-    const token = localStorage.getItem('accessToken');
-    if (token) {
-      try {
-        const { id } = jwtDecode(token);
-        setCurrentUserId(id);
-      } catch {
-        console.warn('Invalid token');
-      }
-    }
-  }, []);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}, []);
+
+  useEffect(() => {
+  if (window.particlesJS?.load) {
+    window.particlesJS.load(
+      'particles-js',
+      '/particlesjs-config.json',
+      () => console.log('Particles.js loaded')
+    );
+  }
+}, []);
+
 
   // состояния для квизов и пагинации
   const [quizzes, setQuizzes] = useState([]);
+  const animSettings = useRef({});
   const [page, setPage] = useState(1);
   const limit = 9;
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
+
+  // состояние видимости окна поддержки
+ const [showSupport, setShowSupport] = useState(false);
+ // переключает showSupport между true/false
+ const toggleSupport = () => setShowSupport(v => !v);
+
   // сортировка и фильтры
-  const [sortOrder, setSortOrder] = useState('new');
+  const [sortOrder, setSortOrder] = useState('Date');
   const [isCatModalOpen, setIsCatModalOpen] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState(() => {
     const saved = localStorage.getItem('selectedCategories');
@@ -45,7 +75,7 @@ function HomePage() {
           return parsed;
         }
       } catch (e) {
-        console.warn('Не удалось прочитать selectedCategories из localStorage', e);
+        console.warn('Failed to read selectedCategories from localStorage', e);
       }
     }
     return [];
@@ -80,14 +110,14 @@ function HomePage() {
         if (isCatModalOpen) {
           api.get('/categories')
             .then(res => setAvailableCategories(res.data))
-            .catch(err => console.error('Ошибка загрузки категорий:', err));
+            .catch(err => console.error('Error loading categories:', err));
         }
       }, [isCatModalOpen]);
 
       
 
   // загрузка списка квизов
-  useEffect(() => {
+   useEffect(() => {
     setLoading(true);
     const params = { page, limit, sort: sortOrder };
     if (selectedCategories.length) {
@@ -96,19 +126,33 @@ function HomePage() {
 
     api.get('/quizzes', { params })
       .then(res => {
-        // теперь res.data = { total, page, pageCount, quizzes: [...] }
-        const newData = res.data.quizzes;
-        setQuizzes(prev => {
-          if (page === 1) return newData;
-          const existingIds = new Set(prev.map(q => q.id));
-          const filtered = newData.filter(q => !existingIds.has(q.id));
-          return [...prev, ...filtered];
-        });
+        let newData = res.data.quizzes;
+
+          // сортировка по дате: новое → старое или старое → новое
+          
+         // сортировка: новое → старое, старое → новое или рандом
+            if (sortOrder === 'new') {
+              newData.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+            } else if (sortOrder === 'old') {
+              newData.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+            } else {
+              // когда sortOrder не 'new' и не 'old' — рандом
+              newData.sort(() => Math.random() - 0.5);
+            }
+
+            setQuizzes(prev => {
+              if (page === 1) return newData;
+              const existingIds = new Set(prev.map(q => q.id));
+              const filtered = newData.filter(q => !existingIds.has(q.id));
+              return [...prev, ...filtered];
+            });
+
+
         setHasMore(newData.length >= limit);
       })
       .catch(err => {
-        console.error('Ошибка при загрузке квизов:', err);
-        setError('Ошибка загрузки квизов');
+        console.error('Error loading quizzes:', err);
+        setError('Error loading quizzes');
       })
       .finally(() => setLoading(false));
   }, [page, limit, sortOrder, selectedCategories]);
@@ -119,8 +163,14 @@ function HomePage() {
     setQuizzes([]);
   }, [selectedCategories]);
 
+  // сброс при смене порядка сортировки
+  useEffect(() => {
+    setPage(1);
+    setQuizzes([]);
+  }, [sortOrder]);
+
   // фильтрация поиска
-  const filteredQuizzes = quizzes.filter(quiz => {
+   const filteredQuizzes = quizzes.filter(quiz => {
     const q = searchQuery.toLowerCase();
     return (
       quiz.title.toLowerCase().includes(q) ||
@@ -128,10 +178,8 @@ function HomePage() {
     );
   });
 
-    useEffect(() => {
-        setPage(1);
-        setQuizzes([]);
-    }, [sortOrder]);
+
+    
 
   // управление модалкой категорий
   const handleOpenCatModal = () => setIsCatModalOpen(true);
@@ -151,7 +199,12 @@ function HomePage() {
     setIsCatModalOpen(false);
   };
 
-
+// удаление чипса категории
+  const handleRemoveCategory = category => {
+    const newCats = selectedCategories.filter(c => c.id !== category.id);
+    setSelectedCategories(newCats);
+    localStorage.setItem('selectedCategories', JSON.stringify(newCats));
+  };
   
 
   // открытие деталей квиза
@@ -171,7 +224,7 @@ function HomePage() {
       }
       setIsModalOpen(true);
     } catch {
-      alert('Не удалось загрузить детали квиза');
+      alert('Failed to load quiz details');
     }
   };
 
@@ -185,7 +238,7 @@ function HomePage() {
   const handleToggleFavorite = async () => {
     if (!selectedQuiz) return;
     const token = localStorage.getItem('accessToken');
-    if (!token) { alert('Вы не авторизованы'); return; }
+    if (!token) { alert('You are not logged in'); return; }
 
     try {
       if (isFavorite) {
@@ -200,7 +253,7 @@ function HomePage() {
         setIsFavorite(true);
       }
     } catch {
-      alert('Не удалось изменить избранное');
+      alert('Failed to edit favorites');
     }
   };
 
@@ -210,6 +263,8 @@ function HomePage() {
   };
 
   return (
+    <>
+    <div id="particles-js" className="particles-bg" />
     <div className="home-container">
       <Header />
 
@@ -224,16 +279,33 @@ function HomePage() {
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
           />
-          <select
-            value={sortOrder}
-            onChange={e => setSortOrder(e.target.value)}
-          >
-            <option value="new">New</option>
-            <option value="old">Old</option>
-          </select>
-          <button onClick={handleOpenCatModal}>Categories</button>
+          <div className="home-search-controls">
+              <select value={sortOrder} onChange={e => setSortOrder(e.target.value)}>
+                <option value="Date">Date</option>
+                <option value="new">New</option>
+                <option value="old">Old</option>
+              </select>
+            <button onClick={handleOpenCatModal}>Categories</button>
+            {selectedCategories.length > 0 && (
+              <button onClick={handleClearCategories}>Clear Categories</button>
+            )}
+          </div>
+
+
+
           {selectedCategories.length > 0 && (
-            <button onClick={handleClearCategories}>Clear Categories</button>
+            <div className="selected-categories-chips">
+              {selectedCategories.map(cat => (
+                <div
+                  key={cat.id}
+                  className="category-chip"
+                  onClick={() => handleRemoveCategory(cat)}
+                >
+                  {cat.name}
+                  <span className="remove-chip">&times;</span>
+                </div>
+              ))}
+            </div>
           )}
         </div>
 
@@ -244,25 +316,38 @@ function HomePage() {
             const isLast = index === filteredQuizzes.length - 1;
             // предполагаем, что API отдаёт поле myProgress (0–100)
             const progress = quiz.myProgress ?? 0;
+          
 
-            return (
+            if (!animSettings.current[quiz.id]) {
+             const animations = ['fadeInUp','fadeInDown','fadeInLeft','fadeInRight'];
+             const anim = animations[Math.floor(Math.random() * animations.length)];
+             const delay = `${Math.random() * 0.6}s`;
+             animSettings.current[quiz.id] = { anim, delay };
+           }
+           const { anim, delay } = animSettings.current[quiz.id];
+
+           return (
+              
               <div
                 key={quiz.id}
-                className="home-quiz-card-wrapper"
+                className="home-quiz-card-wrapper visible"
                 ref={isLast ? lastQuizElementRef : null}
+                style={{
+                '--delay': delay,   // из animSettings
+                '--anim' : anim     // из animSettings
+              }}
+                // – чем больше множитель, тем разброс задержек шире
               >
+
                 {/* бейдж «вы — автор» */}
-                {quiz.creator?.id === currentUserId && (
-                  <div
-                    className="quiz-owner-badge"
-                    title="You created this quiz"
-                  >
-                    👑
+                 {/* {quiz.creator?.id === currentUserId && (
+                  <div className="quiz-owner-badge" title="You created this quiz">
+                    <img src={ownerIcon} alt="Owner badge" className="owner-icon" />
                   </div>
-                )}
+                )} */}
 
                 <div
-                  className="home-quiz-card"
+                  className={`home-quiz-card ${!isLoggedIn ? 'home-quiz-card--compact' : ''}`}
                   onClick={() => handleOpenQuiz(quiz.id)}
                   style={{ cursor: 'pointer' }}
                 >
@@ -275,23 +360,35 @@ function HomePage() {
                   )}
                   <h2>{quiz.title}</h2>
 
-                  {/* прогресс‑бар */}
-                  <div 
-                    className="quiz-progress-bar" 
-                    role="progressbar" 
-                    aria-valuemin="0" 
-                    aria-valuemax="100" 
-                    aria-valuenow={progress}
-                  >
-                    <div
-                      className="quiz-progress-fill"
-                      style={{ width: `${progress}%` }}
-                    />
-                  </div>
-                  <p className="progress-label">{progress}%</p>
+                    <div className="card-bottom">
+                      {/* прогресс-бар и процент только для залогиненных */}
+                      {isLoggedIn && (
+                        <>
+                          <div 
+                            className="quiz-progress-bar" 
+                            role="progressbar" 
+                            aria-valuemin="0" 
+                            aria-valuemax="100" 
+                            aria-valuenow={progress}
+                          >
+                            <div
+                              className="quiz-progress-fill"
+                              style={{ width: `${progress}%` }}
+                            />
+                          </div>
+                          <p className="progress-label">{progress}%</p>
+                        </>
+                      )}
 
-                  <p>Category: {quiz.category?.name || '—'}</p>
-                  <p>Date: {new Date(quiz.created_at).toLocaleDateString()}</p>
+                      {/* категория и дата */}
+                      <div className="card-info">
+                        <span>{quiz.category?.name || '—'}</span>
+                        <span>{new Date(quiz.created_at).toLocaleDateString()}</span>
+                      </div>
+                    </div>
+
+
+
                 </div>
               </div>
             );
@@ -321,7 +418,40 @@ function HomePage() {
         alreadySelected={selectedCategories}
         availableCategories={availableCategories}
       />
+      {/* <div className="footer-info">
+          info: expy@info.ee
+        </div> */}
     </div>
+    <div className="support-container">
+   <button
+     className="support-button"
+     onClick={toggleSupport}
+     aria-label="Support"
+   >
+     ?
+   </button>
+
+      {/* ——— попап, появляется только когда showSupport = true */}
+      <div className="support-container">
+  <button
+    className="support-button"
+    onClick={toggleSupport}
+    aria-label="Support"
+  >
+    <img src={infoIcon} alt="Info" className="support-icon" />
+  </button>
+
+   {showSupport && (
+     <div className={`support-popup ${showSupport ? 'open' : ''}`}>
+    <p>If u have some problems, contact us:</p>
+    <a href="mailto:expy-support@info.com">
+      expy-support@info.com
+    </a>
+  </div>
+   )}
+ </div>
+ </div>
+  </>
   );
 }
 

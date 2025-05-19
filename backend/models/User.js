@@ -47,6 +47,16 @@ const User = sequelize.define('User', {
     type: DataTypes.DATE,
     allowNull: false,
     defaultValue: DataTypes.NOW
+  },
+    lastUsernameChange: {          
+    type: DataTypes.DATE,
+    allowNull: true,             
+    defaultValue: null
+  },
+  lastEmailChange: {             
+    type: DataTypes.DATE,
+    allowNull: true,
+    defaultValue: null
   }
 }, {
   tableName: 'users',

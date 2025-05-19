@@ -1,270 +1,496 @@
 /* src/styles/HomePage.css */
 
-.home-container {
-    font-family: sans-serif;
-    width: 75%;
-    margin: 0 auto;
-    padding: 0 20px;
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translate3d(0,20px,0); }
+  to   { opacity: 1; transform: translate3d(0,0,0); }
+}
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translate3d(0,-20px,0); }
+  to   { opacity: 1; transform: translate3d(0,0,0); }
+}
+@keyframes fadeInLeft {
+  from { opacity: 0; transform: translate3d(-20px,0,0); }
+  to   { opacity: 1; transform: translate3d(0,0,0); }
+}
+@keyframes fadeInRight {
+  from { opacity: 0; transform: translate3d(20px,0,0); }
+  to   { opacity: 1; transform: translate3d(0,0,0); }
 }
 
-.home-header {
+
+
+/* ==================================
+   Общие контейнеры и типографика
+   ================================== */
+   .home-container {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    box-sizing: border-box;
+  }
+  
+  .home-main {
+    text-align: center;
+    padding-bottom: 40px;
+  }
+  
+  /* ==================================
+     Заголовок страницы
+     ================================== */
+  .home-title {
+    margin: 40px 0 30px;
+    font-size: 4rem;
+    font-weight: 700;
+    color: #2ca192;
+  }
+  
+  /* ==================================
+     Секция поиска и фильтров
+     ================================== */
+  .home-search-section {
+    width: 100%;
+    max-width: 1130px;
+    margin: 4% auto 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .home-search-input {
+    width: 100%;
+    padding: 10px 16px;
+    font-size: 1rem;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    transition: border-color 0.2s ease;
+    box-sizing: border-box;
+  }
+  
+  .home-search-input:focus {
+    border-color: #2ca192;
+    outline: none;
+  }
+  
+  .home-search-controls {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  
+  .home-search-controls select,
+  .home-search-controls button {
+    padding: 10px 16px;
+    font-size: 1rem;
+    border: 2px solid #2ca192;
+    border-radius: 8px;
+    background: #fff;
+    color: #2ca192;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    box-sizing: border-box;
+  }
+  
+  .home-search-controls select:hover,
+  .home-search-controls button:hover {
+    background: #2ca192;
+    color: #fff;
+  }
+  
+  /* ==================================
+     Чипсы выбранных категорий
+     ================================== */
+  .selected-categories-chips {
+    display: flex;
+    justify-content: flex-start; /* выравнивание влево */
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  
+  .category-chip {
+    background: #e0f4f1;
+    color: #007e61;
+    padding: 6px 12px;
+    border-radius: 12px;
+    font-weight: 500;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+    
+  }
+  
+  .category-chip:hover {
+    background: #cde7e2;
+  }
+  
+  .remove-chip {
+    display: inline-block;
+    margin-left: 8px;
+    font-size: 1.1rem;
+    line-height: 1;
+    cursor: pointer;
+    user-select: none;
+  }
+  
+  .remove-chip:hover {
+    color: #004438;
+  }
+  
+  /* ==================================
+     Сетка карточек квизов
+     ================================== */
+  .home-quiz-list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-top: 70px;
+  }
+  
+  @media (max-width: 900px) {
+    .home-quiz-list {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  
+  @media (max-width: 600px) {
+    .home-quiz-list {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+  /* ==================================
+     Анимация появления карточек
+     ================================== */
+  .home-quiz-card-wrapper {
+    position: relative;
+    opacity: 0;
+    transform: translateY(20px);
+    --delay: 0s;
+    transition:
+      opacity 0.6s ease-out var(--delay),
+      transform 0.6s ease-out var(--delay);
+  }
+  
+  .home-quiz-card-wrapper.visible {
+    animation: var(--anim) 0.6s ease-out var(--delay) both;
+  }
+  
+  /* ==================================
+     Бейдж автора поверх обложки
+     ================================== */
+  .quiz-owner-badge {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background: none;
+    box-shadow: none;
+    padding: 0;
+    font-size: 1.5rem;
+    z-index: 3;
+    pointer-events: none;
+  }
+  
+  .quiz-owner-badge .owner-icon {
+    width: 30px;
+    height: 30px;
+    object-fit: contain;
+    display: block;
+  }
+  
+  /* ==================================
+     Дизайн самой карточки
+     ================================== */
+     .home-quiz-card {
+      position: relative;
+      background-color: #fff;
+      border-radius: 12px;
+      overflow: hidden;
+      cursor: pointer;
+      box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    
+      display: flex;
+      flex-direction: column;
+      min-height: 400px; /* или больше по вкусу */
+    }
+    
+    
+    
+  
+  .home-quiz-card-wrapper:hover .home-quiz-card {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  }
+  
+  .home-quiz-card-wrapper:hover .quiz-owner-badge {
+    transform: translateY(-6px);
+  }
+  
+  /* ==================================
+     Обложка квиза
+     ================================== */
+     .quiz-cover-image {
+      display: block;
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      background: #eee;
+      flex-shrink: 0;
+    }
+    
+  /* ==================================
+     Заголовок квиза
+     ================================== */
+     .home-quiz-card h2 {
+      margin: 0;
+      padding: 12px 16px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      text-align: center;
+      color: #333;
+      border-bottom: 1px solid #f0f0f0;
+    
+      word-break: break-word;
+      white-space: normal;
+    }
+    
+    
+    
+  
+  /* ==================================
+     Прогресс-бар
+     ================================== */
+     .quiz-progress-bar {
+      background: #e0e0e0;
+      border-radius: 8px;
+      height: 8px;
+      overflow: hidden;
+      margin: 8px 16px 4px;
+      flex-shrink: 0;
+    }
+  
+    .quiz-progress-fill {
+      background: #2ca192;
+      height: 100%;
+      width: 0;
+      transition: width 0.3s ease;
+    }
+  
+    .progress-label {
+      margin: 0 16px 8px;
+      font-size: 0.9rem;
+      color: #555;
+      flex-shrink: 0;
+    }
+  /* ==================================
+     Нижняя панель: категория и дата
+     ================================== */
+  .home-quiz-card .card-info {
+    margin-top: auto;
+    padding: 12px 16px;
+    font-size: 0.9rem;
+    color: #555;
+    background: #fafafa;
+    border-top: 1px solid #eee;
+  
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px 0;
-}
-
-.home-logo {
-    font-size: 1.5rem;
-    font-weight: bold;
-}
-
-.home-login-link {
-    text-decoration: none;
-    color: #333;
-}
-
-.home-main {
-    text-align: center;
-}
-
-.home-title {
-    margin: 40px 0 20px;
-    font-size: 2rem;
-    font-weight: normal;
-}
-
-.home-search-section {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 30px;
-}
-
-.home-search-input {
-    width: 200px;
-    padding: 8px;
-    font-size: 1rem;
-    margin-right: 10px;
-}
-
-.home-filters {
-    display: flex;
-    gap: 10px;
-}
-
-.home-filter-button {
-    padding: 8px 16px;
-    font-size: 1rem;
-    cursor: pointer;
-}
-
-/* Сетка карточек: 3 колонки */
-.home-quiz-list {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-    margin-top: 20px;
-}
-
-.home-quiz-card {
-    background-color: #eee;
-    padding: 10px;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.quiz-cover-image {
-    width: 100%;
-    height: auto;
-    object-fit: cover;
-    margin-bottom: 10px;
-}
-
-/* Стиль для кнопки Load More */
-.load-more-button {
-    margin: 20px auto;
-    padding: 10px 20px;
-    font-size: 1rem;
-    cursor: pointer;
-}
-
-.loading-indicator {
+  }
+  
+  /* ==================================
+     Лоадер при подгрузке
+     ================================== */
+  .loading-indicator {
     text-align: center;
     font-size: 1.2rem;
     padding: 20px;
     color: #555;
   }
+  
+  /* ==================================
+     Адаптивное уменьшение заголовка
+     и перестройка контролов
+     ================================== */
+  @media (max-width: 600px) {
+    .home-title {
+      font-size: 2rem;
+      margin: 20px 0;
+      line-height: 1.2;
+    }
+  }
+  
+  .particles-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+}
+.home-container {
+  position: relative;
+  z-index: 1;
+}
 
-  /* Модалка - затемнённый фон */
-.quiz-modal-overlay {
-    position: fixed;
-    top: 0; 
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0,0,0,0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 999; /* Поверх всего */
-  }
-  
-  /* Контейнер внутри */
-  .quiz-modal-content {
-    background-color: #fff;
-    width: 500px;
-    max-width: 90%;
-    padding: 1.5rem;
-    border-radius: 8px;
-    position: relative; /* чтобы крестик позиционировать */
-  }
-  
-  /* Кнопка закрыть (X) */
-  .quiz-modal-close {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: transparent;
-    border: none;
-    font-size: 1.2rem;
-    cursor: pointer;
-  }
-  
-  /* Заголовок */
-  .quiz-modal-title {
-    margin-top: 0;
-    text-align: center;
-    margin-bottom: 1rem;
-  }
-  
-  /* Обложка квиза */
-  .quiz-modal-cover img {
-    width: 100%;
-    height: auto;
-    border-radius: 4px;
-    margin-bottom: 1rem;
-  }
-  
-  /* Доп. инфо (категория, кол-во вопросов, создатель, дата) */
-  .quiz-modal-info {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    justify-content: space-around;
-    margin-bottom: 1rem;
-  }
-  
-  /* Кнопки внизу */
-  .quiz-modal-actions {
-    display: flex;
-    justify-content: space-between;
-  }
-  
-  /* Пример стилей для кнопок */
-  .quiz-modal-fav-button,
-  .quiz-modal-start-button {
-    border: none;
-    padding: 0.75rem 1.5rem;
-    cursor: pointer;
-    font-size: 1rem;
-    border-radius: 4px;
-  }
 
-  .quiz-modal-fav-button {
-    background: none;  /* без фона */
-    border: none;
-    padding: 0;        /* убираем отступы */
-    cursor: pointer;
+.card-bottom {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+
+@media (min-width: 595px) and (max-width: 1024px) {
+.home-title {
+    margin: 40px 0 30px;
+    font-size: 3rem;
+    font-weight: 700;
+    color: #2ca192;
   }
-  
-  /* Изменяем размер самой иконки: */
-  .quiz-modal-fav-button img {
-    width: 43px;
-    height: 55px;
-    /* object-fit: cover; */
-  }
-  
-  .quiz-modal-start-button {
-    background-color: #1abc9c; /* бирюзово-зелёный */
-    color: #fff;
-    width: 100%;
-    
-  }
-  
-  .selected-categories-chips {
-    margin-top: 1rem;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-  
-  .category-chip {
-    background-color: #eee;
-    border-radius: 12px;
-    padding: 4px 10px;
-    font-size: 0.9rem;
-  }
-  
-  /* обёртка карточки вместе с бейджем */
+}
+
+
 .home-quiz-card-wrapper {
-  position: relative;
+  opacity: 0;
+  transform: translateY(20px);
+  --delay: 0s;
+  transition:
+    opacity 0.6s ease-out var(--delay),
+    transform 0.6s ease-out var(--delay);
 }
 
-/* бейдж «вы — автор» */
-.quiz-owner-badge {
-  position: absolute;
-  top: 8px;
-  left: 8px;
-  font-size: 1.2rem;
-  pointer-events: none;
+
+/* Compact style for non-logged in users: reduce card height and cover image */
+.home-quiz-card--compact {
+  min-height: 300px; /* вместо 400px по умолчанию */
 }
 
-/* прогресс‑бар под заголовком */
-.home-quiz-card .quiz-progress-bar {
-  height: 4px;
-  background: #eee;
-  border-radius: 2px;
+.home-quiz-card--compact .quiz-cover-image {
+  height: 180px; /* вместо 200px по умолчанию */
+}
+
+
+
+/* ==================================
+   Нижний информационный бар
+   ================================== */
+/* src/styles/HomePage.css */
+
+/* .footer-info {
+  position: fixed;
+   bottom: 0;
+  left: 0;
   width: 100%;
-  margin: 8px 0;
-  overflow: hidden;
-}
-.home-quiz-card .quiz-progress-fill {
-  height: 100%;
-  background: #309F8E;
-  width: 0;
-  transition: width 0.3s ease;
-}
-/* поднимем высоту бара и контраст фона */
-.home-quiz-card .quiz-progress-bar {
-  position: relative;
-  height: 8px;
-  background: #ddd;         /* чуть тёмнее, чтобы было видно даже когда 0% */
-  border-radius: 4px;
-  width: 100%;
-  margin: 12px 0 4px;
-  overflow: hidden;
-}
 
-/* цвет заполнения */
-.home-quiz-card .quiz-progress-fill {
-  height: 100%;
-  background: #309F8E;
-  width: 0;
-  transition: width 0.3s ease;
-}
+  padding: 4px 0;
+  letter-spacing: 0.1em;
+  font-size: 0.9rem;
+  font-weight: 500;
 
-/* лейбл процента */
-.home-quiz-card .progress-label {
-  font-size: 0.8rem;
-  color: #555;
-  margin: 0;
-}
-.progress-label {
-  margin: 4px 0 0;
-  font-size: 0.85rem;
-  color: #555;
+
+  background-color: rgba(255, 255, 255, 0.4);
+
+
+  backdrop-filter: blur(50px);
+  -webkit-backdrop-filter: blur(8px);
+
+  color: #0b3832;
   text-align: center;
+  z-index: 100;
+}
+ */
+
+
+ /* ===== кнопка поддержки в углу ===== */
+/* === обёртка: кнопка и попап === */
+.support-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1;
+}
+
+/* === кнопка остаётся круглой === */
+.support-button {
+  /* убираем fixed/bottom/right */
+  position: relative;
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: 50%;
+  background-color: #d1d1d1;
+  color: #fff;
+  font-size: 1.5rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* === попап прямо под кнопкой === */
+.support-popup {
+  position: absolute;
+  width: 250px;
+  bottom: calc(100% + 8px);  /* над кнопкой + отступ */
+  right: 0;
+  background-color: #d1d1d1;  /* цвет кнопки */
+  color: #000000;
+  padding: 12px 16px;
+  border-radius: 12px;
+
+  transform-origin: bottom right;
+  opacity: 0;
+  transform: scale(0.5);
+  animation: popupGrowUp 0.3s ease-out forwards;
+}
+
+/* маленький «хвостик» пузыря */
+.support-popup::after {
+  content: "";
+  position: absolute;
+  bottom: -6px;           /* чуть ниже низа попапа */
+  right: 16px;            /* совпадает с padding-ом */
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid #d1d1d1;
+}
+
+/* заголовок и ссылка внутри */
+.support-popup p {
+  margin: 0 0 6px;
+  font-weight: 500;
+}
+.support-popup a {
+  color: #000000;
+  text-decoration: none;
+  font-weight: 500;
+}
+.support-popup a:hover {
+  text-decoration: underline;
+}
+
+/* === keyframes для popupGrow === */
+@keyframes popupGrowUp {
+  0% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+
+.support-icon {
+  width: 20px;
+  height: 20px;
 }

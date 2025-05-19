@@ -1,122 +1,427 @@
-/* src/styles/PlayQuizPage.module.css */
+/* PlayQuizPage.css */
 
-.container {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
+
+/* * {
+  border: 2px solid red;
+} */
+
+
+/* ================================
+   Базовые стили
+   ================================ */
+   body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #fff;
+    font-size: 1rem;
   }
+
+  .particles-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  pointer-events: none;
+}
   
-  .imageWrapper {
-    margin-bottom: 20px;
-    text-align: center;
-  }
-  
-  .image {
-    max-width: 100%;
-    height: auto;
-  }
-  
-  .questionText {
-    font-size: 1.2rem;
-    margin-bottom: 20px;
-  }
-  
-  .answersContainer {
+  .playquizbody {
     display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-bottom: 20px;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 16px;
+    box-sizing: border-box;
+  }
+  
+  .playQuizPageContainer {
+    display: flex;
+    width: 100%;
+    max-width: 900px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    overflow: hidden;
+  }
+  
+  /* ================================
+     Левый блок: вопрос, фото, ответы
+     ================================ */
+  .leftSide {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 24px;
+    gap: 24px;
+  }
+  
+  .questionBlock {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding-top: 40px;
+  }
+  
+  .questionTitle {
+    font-size: 2rem;
+    color: #005951;
+    line-height: 1.3;
+    word-wrap: break-word;       /* Позволяет длинным словам переноситься */
+    overflow-wrap: break-word;   /* Для совместимости с более старыми браузерами */
+    max-width: 100%;             /* Ограничивает ширину */
+    white-space: normal;         /* Разрешает перенос строки */
+    display: block;              /* Обеспечивает, чтобы блок был на новой строке */
+    word-break: break-word;      /* Принудительный перенос длинных слов */
+  }
+  
+  
+  
+  
+  .photoContainer {
+    width: 100%;
+    aspect-ratio: 16/9;
+    background-color: #f0f0f0;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  
+  .questionImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+  
+  /* Сетка ответов 2×2 */
+  .answersContainer {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
   }
   
   .answerButton {
-    flex: 1 1 auto;
-    min-width: 100px;
-    padding: 10px;
+    padding: 14px;
+    background-color: #f7f7f7;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    text-align: center;
     cursor: pointer;
-    border: none;
-    border-radius: 4px;
-    background-color: #f0f0f0; /* цвет невыбранного варианта */
+    transition: background-color .2s, border-color .2s;
   }
+  
   
   .selectedAnswer {
-    background-color: #4caf50; /* цвет выбранного варианта */
+    background-color: #FFDC75;
+    border-color: #e6b800;
+    color: #fff;
   }
   
-  .nextButton {
-    padding: 10px 20px;
+  /* ================================
+     Кнопка Next/Finish
+     ================================ */
+  .finishButton {
+    padding: 16px;
     background-color: #009688;
     color: #fff;
+    font-size: 1.1rem;
     border: none;
-    border-radius: 4px;
+    border-radius: 8px;
     cursor: pointer;
+    transition: background-color .2s;
+    width: 100%;
   }
   
-  .progressContainer {
-    margin-top: 30px;
+  .finishButton:disabled {
+    background-color: #bbb;
+    cursor: not-allowed;
   }
+  
+  /* ================================
+     Правый блок: прогресс-бар (2 колонки)
+     ================================ */
+     .progressContainer {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px;
+      background-color: #fafafa;
+      border-left: 1px solid #eee;
+      min-width: 200px;  /* Увеличиваем минимальную ширину правого блока */
+    }
   
   .progressText {
-    font-weight: bold;
-    margin-bottom: 10px;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #009688;
+    margin-bottom: 12px;
   }
   
   .tilesContainer {
-    display: flex;
-    gap: 5px;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr); /* 5 квадратиков в строку */
+    grid-auto-rows: 32px;
+    gap: 8px;
+    width: 100%; /* Убедитесь, что контейнер занимает всю доступную ширину */
   }
-  
   .tile {
-    width: 20px;
-    height: 20px;
-    border-radius: 3px;
-  }
-  
-  .tileCompleted {
-    background-color: #4caf50; /* пройденный вопрос */
+    width: 32px;
+    height: 32px;
+    border-radius: 4px;
+    background-color: #ddd;
   }
   
   .tileCurrent {
-    background-color: #009688; /* текущий вопрос */
+    background-color: #a4a4a4;
   }
-  
-  .tileFuture {
-    background-color: #ccc; /* будущий вопрос */
-  }
-  .progressContainer {
-    margin-top: 30px;
-    text-align: center; /* или другое выравнивание */
-  }
-  
-  .progressText {
-    font-weight: bold;
-    margin-bottom: 10px;
-  }
-  
-  .tilesContainer {
-    display: flex;
-    gap: 5px;
-    justify-content: center; /* чтобы плитки были по центру */
-  }
-  
-  .tile {
-    width: 20px;
-    height: 20px;
-    border-radius: 3px;
-  }
-  
-  /* Цвет для уже пройденных вопросов */
+
   .tileCompleted {
-    background-color: #4caf50;
-  }
-  
-  /* Цвет для текущего вопроса */
-  .tileCurrent {
     background-color: #009688;
   }
   
-  /* Цвет для будущих вопросов */
-  .tileFuture {
-    background-color: #ccc;
+  /* ================================
+     Адаптив до 768px
+     ================================ */
+  @media (max-width: 768px) {
+    .playQuizPageContainer {
+      flex-direction: column;
+      border: none;
+    }
+  
+    /* Прогресс сверху */
+    .progressContainer {
+      order: -1;
+      flex-direction: row;
+      justify-content: flex-start;  /* теперь всё прижато влево */
+      align-items: center;
+      width: 100%;
+      padding: 12px 16px;
+      border-left: none;
+      border-bottom: 1px solid #eee;
+      background: #fff;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+  
+    .progressText {
+      margin: 0;
+      margin-right: 10px; /* пространство между "1/5" и первым квадратиком */
+    }
+  
+    .tilesContainer {
+      display: grid;
+      /* 5 квадратиков по 32px каждый */
+      grid-template-columns: repeat(8, 32px);
+      grid-auto-rows: 32px;
+      gap: 4px;          /* небольшой зазор между квадратиками */
+      /* width: auto; */ /* можно убрать, чтоб контейнер обтягивал только квадратики */
+    }
+    
+  
+    /* Левый контент под прогрессом */
+    .leftSide {
+      padding: 16px;
+      gap: 16px;
+    }
+  
+    .questionTitle {
+      font-size: 1.2rem;
+    }
+  
+    .photoContainer {
+      margin-top: 8px;
+    }
+  
+    .answersContainer {
+      gap: 12px;
+    }
+  
+    .answerButton {
+      padding: 12px;
+      font-size: 0.95rem;
+    }
+  
+    /* Фиксированная кнопка Next чуть выше края */
+    .finishButton {
+      position: fixed;
+      bottom: calc(env(safe-area-inset-bottom, 16px) + 16px);
+      left: 50%;
+      transform: translateX(-50%);
+      width: 95%;
+      z-index: 20;
+      box-shadow: 0 -2px 6px rgba(0,0,0,0.1);
+    }
+  
+    /* Отступ у контента, чтобы кнопка не закрывала */
+    .leftSide {
+      padding-bottom: calc(env(safe-area-inset-bottom, 16px) + 72px);
+    }
   }
   
+
+  /* Для мобильных устройств */
+@media (max-width: 768px) {
+  .finishButton {
+    width: 95%; /* Кнопка "Next" будет занимать всю ширину */ /* Убираем ограничение по ширине */
+    padding: 16px; /* Немного увеличиваем отступы для удобства */
+  }
+
+  
+  .progressContainer {
+    min-width: 120px;  /* Возможно, придется уменьшить ширину правого блока, если он слишком большой */
+  }
+}
+
+
+/* Для экранов с шириной 480px и меньше */
+@media (max-width: 550px) {
+  .answersContainer {
+    display: block;  /* Переводим ответы в один столбец */
+    width: 100%;     /* Устанавливаем ширину контейнера на 100% */
+  }
+
+  .answerButton {
+    width: 100%;     /* Кнопки становятся на всю ширину */
+    margin-bottom: 12px; /* Отступ между кнопками */
+  }
+}
+
+
+/* Для экранов с шириной 550px и больше */
+@media (max-width: 768px) {
+  /* Убираем бордер у блока */
+  .playQuizPageContainer {
+    border: none;
+    box-shadow: none;
+  }
+
+  /* Перемещаем навигацию сверху */
+  .progressContainer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 10;
+    padding: 16px;
+  }
+
+
+
+  .progressText {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #009688;
+    margin-bottom: 12px;
+  }
+
+  /* Увеличиваем размеры ответов */
+  .answerButton {
+    font-size: 1.2rem;  /* Увеличиваем размер текста */
+    padding: 16px;      /* Увеличиваем отступы кнопок */
+    width: 100%;        /* Кнопки на всю ширину */
+    margin-bottom: 12px; /* Отступ между кнопками */
+  }
+
+  /* Увеличиваем контейнер для ответов */
+  .answersContainer {
+    display: block;  /* Переводим на одну колонку */
+    width: 100%;
+  }
+
+
+  /* Убираем обводку у контейнера */
+.playQuizPageContainer {
+  border: none;  /* Убираем обводку */
+}
+
+/* Увеличиваем размер текста для вопроса */
+.questionTitle {
+  font-size: 2.5rem;  /* Увеличиваем размер шрифта */
+  line-height: 1.4;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* Увеличиваем размеры ответов */
+.answerButton {
+  font-size: 1.5rem;  /* Увеличиваем размер шрифта кнопок */
+  padding: 18px;      /* Увеличиваем отступы кнопок */
+  width: 100%;        /* Кнопки на всю ширину */
+  margin-bottom: 12px; /* Отступ между кнопками */
+}
+
+/* Увеличиваем контейнер для ответов */
+.answersContainer {
+  display: block;  /* Переводим на одну колонку */
+  width: 100%;     /* Контейнер на всю ширину */
+}
+
+
+.finishButtonWrapper {
+  background-color: #fff;
+  width: 100%;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  padding: 16px;
+  z-index: 10;
+  display: flex;
+  justify-content: center;
+}
+
+.finishButtonWrapper .finishButton {
+  width: 90%;
+  max-width: 700px;
+}
+
+
+
+}
+
+.particles-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* Loading state */
+.loading-container {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  font-size: 1.5rem;
+  color: #555;
+}
+
+/* Main container above particles */
+.playquizbody {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 16px;
+}
+
+
+.particles-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  pointer-events: none;
+}
+

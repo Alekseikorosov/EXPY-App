@@ -1,107 +1,201 @@
 /* src/styles/ResetPassPage.css */
 
-/* Основной контейнер, центрируем по вертикали и горизонтали */
-.resetpass-container {
+/* === Переменные темы === */
+:root {
+    --bg-page: #f0f3f5;
+    --card-bg: #ffffff;
+    --primary: #3cad9f;
+    --primary-hover: #349682;
+    --text-main: #333333;
+    --text-muted: #666666;
+    --error: #e74c3c;
+    --success: #27ae60;
+    --input-border: #cccccc;
+    --shadow-light: 0 6px 20px rgba(0, 0, 0, 0.05);
+    --radius: 8px;
+    --transition-fast: 0.2s ease-in-out;
+  
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+  }
+  
+  /* === Базовые сбросы === */
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+  
+  body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    background-color: var(--bg-page);
+    color: var(--text-main);
+  }
+  
+  /* === Контейнер и карточка === */
+  .resetpass-container {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh; /* Страница занимает всю высоту окна */
-    background-color: #f5f5f5; /* Светлый фон (можно изменить) */
-}
-
-/* Карточка с формой */
-.resetpass-card {
-    background-color: #fff;
-    width: 300px;          /* Ширина карточки */
-    padding: 30px;         /* Внутренние отступы */
-    border-radius: 8px;    /* Скруглённые углы */
-    box-shadow: 0 0 10px rgba(0,0,0,0.1); /* Лёгкая тень */
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;  /* Растягивает элементы по ширине */
-}
-
-/* Заголовок формы */
-.resetpass-title {
-    text-align: center;
-    margin-bottom: 20px;
-    color: #333;
-}
-
-/* Группа полей ввода */
-.resetpass-input-group {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 15px;
-}
-
-.resetpass-input-group label {
-    margin-bottom: 5px;
-    font-size: 0.9rem;
-    color: #666;
-}
-
-.resetpass-input-group input {
-    padding: 10px;
-    font-size: 0.95rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    outline: none;
-}
-
-.resetpass-input-group input:focus {
-    border-color: #70bcae; /* Цвет рамки при фокусе */
-}
-
-/* Кнопка отправки */
-.resetpass-button {
-    background-color: #70bcae; /* Основной цвет кнопки */
-    color: #fff;
-    font-size: 1rem;
-    padding: 12px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-bottom: 15px;
+    min-height: 100vh;
+    padding: 20px;
+  }
+  
+  .resetpass-card {
+    background: var(--card-bg);
     width: 100%;
-}
-
-.resetpass-button:hover {
-    background-color: #5ba297; /* Потемнее при наведении */
-}
-
-/* Блок ошибки */
-.resetpass-error {
-    color: red;
-    text-align: center;
-    margin-bottom: 10px;
-}
-
-/* Блок успешного сообщения */
-.resetpass-success {
-    color: green;
-    text-align: center;
-    margin-bottom: 10px;
-}
-
-.resetpass-code-container {
+    max-width: 400px;
+    padding: 40px 30px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-light);
     display: flex;
-    gap: 8px; /* Расстояние между «кубиками» */
+    flex-direction: column;
+    animation: fadeIn 0.4s ease-out both;
+  }
+  
+  /* Анимация появления */
+  /* @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-15px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  } */
+  
+  /* === Заголовок и сообщения === */
+  .resetpass-title {
+    margin: 0 0 24px;
+    text-align: center;
+    font-size: 1.75rem;
+    font-weight: 600;
+  }
+  
+  .resetpass-error,
+  .resetpass-success {
+    text-align: center;
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+  
+  .resetpass-error {
+    color: var(--error);
+  }
+  
+  .resetpass-success {
+    color: var(--success);
+  }
+  
+  /* === Группа полей ввода === */
+  .resetpass-input-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+  }
+  
+  .resetpass-input-group label {
+    margin-bottom: 6px;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+  }
+  
+  .resetpass-input-group input {
+    padding: 12px 14px;
+    font-size: 1rem;
+    border: 1px solid var(--input-border);
+    border-radius: var(--radius);
+    outline: none;
+    transition: border-color var(--transition-fast),
+                box-shadow var(--transition-fast);
+  }
+  
+  .resetpass-input-group input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(60, 173, 159, 0.2);
+  }
+  
+  /* === Ввод кода (6 ячеек) === */
+  .resetpass-code-container {
+    display: flex;
+    gap: 10px;
     justify-content: center;
-    margin-top: 10px;
-}
-
-.resetpass-code-input {
-    width: 40px;
-    height: 40px;
+    margin: 16px 0;
+  }
+  
+  .resetpass-code-input {
+    width: 48px;
+    height: 50px;
     font-size: 1.5rem;
     text-align: center;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    border: 1px solid var(--input-border);
+    border-radius: var(--radius);
     outline: none;
-}
-
-.resetpass-code-input:focus {
-    border-color: #70bcae; /* Цвет рамки при фокусе */
-}
-
+    transition: border-color var(--transition-fast),
+                box-shadow var(--transition-fast);
+  }
+  
+  .resetpass-code-input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(60, 173, 159, 0.2);
+  }
+  
+  /* === Кнопки === */
+  .resetpass-button,
+  .resetpass-resend-button {
+    font-size: 1rem;
+    padding: 14px;
+    border-radius: var(--radius);
+    border: none;
+    cursor: pointer;
+    transition: background var(--transition-fast),
+                transform var(--transition-fast),
+                color var(--transition-fast);
+    width: 100%;
+    margin-top: 12px;
+  }
+  
+  /* Основная подтверждающая кнопка */
+  .resetpass-button {
+    background: var(--primary);
+    color: #fff;
+  }
+  
+  .resetpass-button:hover:not(:disabled) {
+    background: var(--primary-hover);
+    transform: translateY(-1px);
+  }
+  
+  .resetpass-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  
+  /* Кнопка «отправить код ещё раз» */
+  .resetpass-resend-button {
+    background: transparent;
+    color: var(--primary);
+    font-size: 0.9rem;
+  }
+  
+  .resetpass-resend-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  
+  /* === Адаптивность === */
+  @media (max-width: 420px) {
+    .resetpass-card {
+      padding: 30px 20px;
+    }
+    .resetpass-code-input {
+      width: 40px;
+      height: 40px;
+      font-size: 1.25rem;
+    }
+  }
+  

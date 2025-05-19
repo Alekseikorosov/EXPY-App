@@ -2,6 +2,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../utils/axiosInstance';
 import '../styles/PlayQuizPage.css';
+import 'particles.js';
+
+
 
 function PlayQuizPage() {
   const { quizId, attemptId: attemptIdParam } = useParams();
@@ -12,17 +15,14 @@ function PlayQuizPage() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
 
-  // Флаги для контроля состояния
   const hasStartedRef = useRef(false);
   const isFinishedRef = useRef(false);
   const createdAttemptRef = useRef(false);
   const [attemptId, setAttemptId] = useState(attemptIdParam || null);
 
-  // Ключ для хранения текущего индекса в localStorage
   const getIndexKey = (quizId, attemptId) =>
     `quiz_${quizId}_attempt_${attemptId}_currentIndex`;
 
-  // Создание новой попытки
   const createAttempt = async () => {
     try {
       const res = await api.post('/game/start', { quiz_id: quizId });
@@ -35,7 +35,6 @@ function PlayQuizPage() {
     }
   };
 
-  // Загрузка вопросов квиза
   const loadQuestions = async () => {
     try {
       const qRes = await api.get(`/game/${quizId}/questions`);
@@ -45,7 +44,25 @@ function PlayQuizPage() {
     }
   };
 
-  // Инициализация: создание попытки, загрузка вопросов и установка сохранённого индекса
+
+  useEffect(() => {
+  const tryInitParticles = () => {
+    const container = document.getElementById('particles-js');
+    if (container && window.particlesJS?.load) {
+      window.particlesJS.load(
+        'particles-js',
+        '/particlesjs-config.json',
+        () => console.log('Particles.js loaded on PlayQuizPage')
+      );
+    } else {
+      setTimeout(tryInitParticles, 100); // Подождём, если элемент ещё не в DOM
+    }
+  };
+
+  tryInitParticles();
+}, []);
+
+
   useEffect(() => {
     if (hasStartedRef.current) return;
     hasStartedRef.current = true;
@@ -80,14 +97,12 @@ function PlayQuizPage() {
     };
   }, [quizId, attemptId, navigate]);
 
-  // Сохраняем текущий индекс в localStorage
   useEffect(() => {
     if (attemptId) {
       localStorage.setItem(getIndexKey(quizId, attemptId), currentIndex);
     }
   }, [quizId, attemptId, currentIndex]);
 
-  // Проверка активности попытки (запускается только если attempt уже создан)
   useEffect(() => {
     if (!attemptId || !attempt) return;
 
@@ -105,15 +120,12 @@ function PlayQuizPage() {
     return () => clearInterval(intervalId);
   }, [attemptId, attempt, navigate]);
 
-  // Обработка выбора ответа
   function handleSelectAnswer(answerId) {
     setSelectedAnswer(answerId);
   }
 
-  // Отправка ответа
   async function submitAnswer(questionId, answerId) {
     if (!attemptId) return;
-    console.log('submitAnswer =>', { attempt_id: attemptId, question_id: questionId, answer_id: answerId });
     try {
       await api.post('/game/answer', {
         attempt_id: attemptId,
@@ -125,16 +137,13 @@ function PlayQuizPage() {
     }
   }
 
-  // Переход к следующему вопросу или завершение квиза
   async function handleNext() {
-    if (selectedAnswer === null) {
-      console.log('No answer selected for question', questions[currentIndex].id);
-      return;
-    }
+    if (selectedAnswer === null) return;
+
     const currentQuestion = questions[currentIndex];
-    console.log('Submitting question_id:', currentQuestion.id, 'answer_id:', selectedAnswer);
     await submitAnswer(currentQuestion.id, selectedAnswer);
     setSelectedAnswer(null);
+
     if (currentIndex < questions.length - 1) {
       setCurrentIndex(currentIndex + 1);
     } else {
@@ -142,7 +151,6 @@ function PlayQuizPage() {
     }
   }
 
-  // Завершение квиза и переход на страницу результата
   async function finishQuiz() {
     if (!attemptId) return;
     isFinishedRef.current = true;
@@ -172,57 +180,74 @@ function PlayQuizPage() {
   }
 
   const currentQuestion = questions[currentIndex];
+  const isLastQuestion = currentIndex === questions.length - 1;
 
   return (
-    <div className="container">
-      <h2>Quiz #{quizId}</h2>
-      <h3>Attempt ID: {attemptId}</h3>
-      <div className="progressContainer">
-        <p className="progressText">
-          Question {currentIndex + 1} of {questions.length}
-        </p>
-        <div className="tilesContainer">
-          {questions.map((_, index) => {
-            let tileClass = 'tile';
-            if (index < currentIndex) {
-              tileClass += ' tileCompleted';
-            } else if (index === currentIndex) {
-              tileClass += ' tileCurrent';
-            } else {
-              tileClass += ' tileFuture';
-            }
-            return <div key={index} className={tileClass} />;
-          })}
-        </div>
-      </div>
+    <>
+    <div id="particles-js" className="particles-bg" />
 
-      <div className="question-section">
-        <p className="questionText">{currentQuestion.question_text}</p>
-        {currentQuestion.question_image && (
-          <div className="imageWrapper">
-            <img src={currentQuestion.question_image} alt="Question" className="image" />
+    <div className="playquizbody">
+      <div className="playQuizPageContainer">
+        {/* Левый блок: вопрос, фото, ответы, кнопка */}
+        <div className="leftSide">
+          <div className="questionBlock">
+            <h2 className="questionTitle">{currentQuestion.question_text}</h2>
+            {currentQuestion.question_image && (
+              <div className="photoContainer">
+                <img
+                  src={currentQuestion.question_image}
+                  alt="Question"
+                  className="questionImage"
+                />
+              </div>
+            )}
           </div>
-        )}
-        <div className="answersContainer">
-          {currentQuestion.answers.map((ans) => {
-            const isSelected = selectedAnswer === ans.id;
-            return (
-              <button
-                key={ans.id}
-                className={`answerButton ${isSelected ? 'selectedAnswer' : ''}`}
-                onClick={() => handleSelectAnswer(ans.id)}
-              >
-                {ans.answer_text}
-              </button>
-            );
-          })}
+
+          <div className="answersContainer">
+            {currentQuestion.answers.map((ans) => {
+              const isSelected = selectedAnswer === ans.id;
+              return (
+                <button
+                  key={ans.id}
+                  className={`answerButton ${isSelected ? 'selectedAnswer' : ''}`}
+                  onClick={() => handleSelectAnswer(ans.id)}
+                >
+                  {ans.answer_text}
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="finishButtonWrapper">
+          <button
+            type="button"
+            className="finishButton"
+            onClick={handleNext}
+            disabled={selectedAnswer === null}
+          >
+            {isLastQuestion ? 'Finish' : 'Next'}
+          </button>
+        </div>
+
+        </div>
+
+        {/* Правый блок: прогресс-бар */}
+        <div className="progressContainer">
+          <span className="progressText">
+            {currentIndex + 1}/{questions.length}
+          </span>
+          <div className="tilesContainer">
+            {questions.map((_, index) => {
+              let tileClass = 'tile';
+              if (index < currentIndex) tileClass += ' tileCompleted';
+              else if (index === currentIndex) tileClass += ' tileCurrent';
+              return <div key={index} className={tileClass} />;
+            })}
+          </div>
         </div>
       </div>
-
-      <button type="button" className="nextButton" onClick={handleNext} disabled={selectedAnswer === null}>
-        {currentIndex < questions.length - 1 ? 'Next' : 'Finish'}
-      </button>
     </div>
+    </>
   );
 }
 

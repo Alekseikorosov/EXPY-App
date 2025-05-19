@@ -1,8 +1,9 @@
 import React, { useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import QuizModal from '../QuizModal';
+import '../../styles/QuizCard.css';
 
-function QuizCard({
+export default function QuizCard({
   quiz,
   attempt,
   selectedQuizzes,
@@ -21,8 +22,6 @@ function QuizCard({
   const [longPressFired, setLongPressFired] = useState(false);
   const pressTimerRef = useRef(null);
   const justToggledRef = useRef(false);
-
-  // Новый стейт для показа модалки
   const [showModal, setShowModal] = useState(false);
 
   const startPress = () => {
@@ -37,7 +36,6 @@ function QuizCard({
       pressTimerRef.current = null;
     }
   };
-
   const handlePointerDown = e => {
     e.stopPropagation();
     if (selectedQuizzes.length === 0) startPress();
@@ -56,31 +54,48 @@ function QuizCard({
     clearPress();
   };
 
+  // в начале компонента, сразу после деструктуризации props
+const fullTitle = quiz.title || '';
+const shortTitle =
+  fullTitle.length > 15
+    ? fullTitle.slice(0, 15) + '…'
+    : fullTitle;
+
+
   return (
     <div
-      className={`quiz-card-new ${isSelected ? 'selected' : ''}`}
+      className={`quiz-card-new${isSelected ? ' selected' : ''}`}
       onPointerDown={handlePointerDown}
       onPointerUp={handlePointerUp}
       onPointerLeave={handlePointerLeave}
+      tabIndex={0}
     >
-      <h3 className="quiz-card-new-title">{quiz.title}</h3>
+          <h3
+            className="quiz-card-new-title"
+            title={fullTitle}
+          >
+            {shortTitle}
+          </h3>
+
 
       <div
         className="quiz-card-new-cover-wrap"
         onClick={e => {
           e.stopPropagation();
-          // если переключали селект — игнорим
           if (justToggledRef.current) {
             justToggledRef.current = false;
             return;
           }
-          // открываем QuizModal для закладок или истории
           if ((isBookmark || isHistory) && selectedQuizzes.length === 0) {
             setShowModal(true);
           }
         }}
       >
-        <img src={quiz.cover} alt={quiz.title} className="quiz-card-new-cover" />
+        <img
+          src={quiz.cover}
+          alt={quiz.title}
+          className="quiz-card-new-cover"
+        />
       </div>
 
       <div className="quiz-card-new-footer">
@@ -98,23 +113,26 @@ function QuizCard({
               {isHistory && attempt ? (
                 <>
                   <p>Score: {attempt.final_score} / {quiz.question_quantity}</p>
-                  <p>Percent: {((attempt.final_score / quiz.question_quantity) * 100).toFixed(1)}%</p>
+                  <p>
+                    Percent: {((attempt.final_score / quiz.question_quantity) * 100).toFixed(1)}%
+                  </p>
                   <p>Date: {new Date(attempt.end_time).toLocaleDateString()}</p>
-                  <p>Duration: {(() => {
-                    const ms = new Date(attempt.end_time) - new Date(attempt.start_time);
-                    const m = Math.floor(ms / 60000);
-                    const s = Math.floor((ms % 60000) / 1000);
-                    return `${m}m ${s}s`;
-                  })()}</p>
+                  <p>
+                    Duration:{' '}
+                    {(() => {
+                      const ms = new Date(attempt.end_time) - new Date(attempt.start_time);
+                      const m = Math.floor(ms / 60000);
+                      const s = Math.floor((ms % 60000) / 1000);
+                      return `${m}m ${s}s`;
+                    })()}
+                  </p>
                 </>
               ) : (
                 <>
                   <p>Category: {quiz.category?.name || 'No Category'}</p>
                   <p>Questions: {quiz.question_quantity || 0}</p>
                   <p>{new Date(quiz.created_at).toLocaleDateString()}</p>
-                  {isBookmark && (
-                    <p>Creator: {quiz.creator?.username || 'Unknown'}</p>
-                  )}
+                  {isBookmark && <p>Creator: {quiz.creator?.username || 'Unknown'}</p>}
                 </>
               )}
             </div>
@@ -129,23 +147,31 @@ function QuizCard({
               setOpenDetailQuizId(null);
               setOpenDropdownQuizId(openDropdownQuizId === quiz.id ? null : quiz.id);
             }}
-          >&hellip;</button>
+          >
+            &hellip;
+          </button>
           {openDropdownQuizId === quiz.id && (
             <div className="actions-dropdown" onClick={e => e.stopPropagation()}>
               {isHistory ? (
                 <>
                   <button onClick={() => handleSelectQuiz(quiz.id)}>Retake</button>
-                  <button onClick={() => navigate(`/attempt/${quiz.id}/result`)}>Results</button>
+                  <button onClick={() => navigate(`/attempt/${quiz.id}/result`)}>
+                    Results
+                  </button>
                 </>
               ) : isBookmark ? (
                 <>
                   <button onClick={() => handleStartQuiz(quiz.id)}>Start Quiz</button>
-                  <button onClick={() => handleToggleFavorite(quiz.id)}>Remove from BM</button>
+                  <button onClick={() => handleToggleFavorite(quiz.id)}>
+                    Remove from BM
+                  </button>
                 </>
               ) : (
                 <>
                   <button onClick={() => handleStartQuiz(quiz.id)}>Start Quiz</button>
-                  <button onClick={() => navigate(`/edit-quiz/${quiz.id}`)}>Edit Quiz</button>
+                  <button onClick={() => navigate(`/edit-quiz/${quiz.id}`)}>
+                    Edit Quiz
+                  </button>
                   <button onClick={() => handleSelectQuiz(quiz.id)}>Delete Quiz</button>
                 </>
               )}
@@ -154,11 +180,10 @@ function QuizCard({
         </div>
       </div>
 
-      {/* Выводим QuizModal для истории или закладок */}
       {showModal && (
         <QuizModal
           quiz={quiz}
-          isLoggedIn={true}
+          isLoggedIn
           isFavorite={isBookmark}
           onToggleFavorite={() => handleToggleFavorite(quiz.id)}
           onClose={() => setShowModal(false)}
@@ -172,9 +197,9 @@ function QuizCard({
 QuizCard.propTypes = {
   quiz: PropTypes.object.isRequired,
   attempt: PropTypes.shape({
-    final_score: PropTypes.number.isRequired,
-    start_time: PropTypes.string.isRequired,
-    end_time: PropTypes.string.isRequired,
+    final_score: PropTypes.number,
+    start_time: PropTypes.string,
+    end_time: PropTypes.string,
   }),
   selectedQuizzes: PropTypes.array.isRequired,
   handleSelectQuiz: PropTypes.func.isRequired,
@@ -195,5 +220,3 @@ QuizCard.defaultProps = {
   handleToggleFavorite: () => {},
   attempt: null,
 };
-
-export default QuizCard;

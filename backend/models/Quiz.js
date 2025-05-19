@@ -10,7 +10,7 @@ const Quiz = sequelize.define('Quiz', {
     autoIncrement: true
   },
   title: {
-    type: DataTypes.STRING(255),
+    type: DataTypes.STRING(50),
     allowNull: false
   },
   category_id: {
@@ -27,7 +27,10 @@ const Quiz = sequelize.define('Quiz', {
   },
   cover: {
     type: DataTypes.STRING(500),
-    allowNull: false
+    allowNull: false,            
+    validate: {
+      notEmpty: { msg: 'Cover is required' }
+    }
   }
 }, {
   tableName: 'quizzes',

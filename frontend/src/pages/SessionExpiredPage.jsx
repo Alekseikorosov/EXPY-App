@@ -1,20 +1,25 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/SessionExpiredPage.css';
+import { FiClock } from 'react-icons/fi'; // иконка таймера
 
 function SessionExpiredPage() {
   const navigate = useNavigate();
 
   const handleGoHome = () => {
-    // Используем replace, чтобы не сохранять эту страницу в истории
     navigate('/', { replace: true });
   };
 
   return (
     <div className="session-expired-container">
-      <h2>Сессия истекла</h2>
-      <p>Вы превысили время ожидания. Пожалуйста, вернитесь на главную страницу и попробуйте снова.</p>
-      <button onClick={handleGoHome}>Вернуться на главную</button>
+      <FiClock className="session-expired-icon" />
+      <h2 className="session-expired-title">Session Expired</h2>
+      <p className="session-expired-text">
+        Your session has timed out due to inactivity. Please return to the home page to start again.
+      </p>
+      <button className="session-expired-button" onClick={handleGoHome}>
+        Go to Home
+      </button>
     </div>
   );
 }

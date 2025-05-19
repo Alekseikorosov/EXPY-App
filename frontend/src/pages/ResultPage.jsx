@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import api from '../utils/axiosInstance';
 import '../styles/ResultPage.css';
+import 'particles.js';
 
 function ResultPage() {
   const { attemptId } = useParams();
@@ -10,6 +11,25 @@ function ResultPage() {
   const [selectedQuestionIndex, setSelectedQuestionIndex] = useState(0);
   const [searchParams] = useSearchParams();
   const hasLoadedResult = useRef(false);
+
+
+  useEffect(() => {
+  const tryInitParticles = () => {
+    const container = document.getElementById('particles-js');
+    if (container && window.particlesJS?.load) {
+      window.particlesJS.load(
+        'particles-js',
+        '/particlesjs-config.json',
+        () => console.log('Particles.js loaded on ResultPage')
+      );
+    } else {
+      setTimeout(tryInitParticles, 100);
+    }
+  };
+
+  tryInitParticles();
+}, []);
+
 
   useEffect(() => {
     async function loadResult() {
@@ -54,33 +74,40 @@ function ResultPage() {
     return <div>Loading result...</div>;
   }
 
-  const { details, final_score } = resultData;
-  const current = details[selectedQuestionIndex];
+        const { details, final_score } = resultData;
+        const current = details[selectedQuestionIndex];
 
-  return (
-    <div className="result-container">
-      <h2 className="result-title">Результаты попытки #{attemptId}</h2>
-      <p className="result-score">
-        Правильных ответов: {final_score} / {details.length}
-      </p>
+        return (
+          <>
+          <div id="particles-js" className="particles-bg" />
+          <div className="result-container">
+            <h2 className="result-title">Quiz Completed!</h2>
       <div className="result-progress-bar">
         <div
           className="progress-fill"
           style={{ width: `${(final_score / details.length) * 100}%` }}
         />
+        <span className="progress-text">
+          {final_score} / {details.length}
+        </span>
       </div>
+
       <div className="result-content">
-        <div className="questions-nav">
-          {details.map((q, i) => (
-            <div
-              key={q.question_id}
-              className={`nav-item ${getNavClass(q)} ${i === selectedQuestionIndex ? 'selected' : ''}`}
-              onClick={() => setSelectedQuestionIndex(i)}
-            >
-              {i + 1}
-            </div>
-          ))}
+        <div className="questions-nav-wrapper">
+          <div className="questions-nav">
+            {details.map((q, i) => (
+              <div
+                key={q.question_id}
+                className={`nav-item ${getNavClass(q)} ${i === selectedQuestionIndex ? 'selected' : ''}`}
+                onClick={() => setSelectedQuestionIndex(i)}
+              >
+                {i + 1}
+              </div>
+            ))}
+          </div>
         </div>
+
+
         <div className="question-detail">
           <h3 className="question-text">{current.question_text}</h3>
           {current.question_image && (
@@ -108,6 +135,7 @@ function ResultPage() {
         </button>
       </div>
     </div>
+    </>
   );
 }
 

@@ -8,12 +8,35 @@ import CategoriesModal from './CategoriesModal';
 import QuizCard from './profileComp/QuizCard';
 import '../styles/ProfileCreatedQuizzes.css';
 
+
 function ProfileUserHistory({ searchTerm = '' }) {
   const [userId, setUserId] = useState(null);
   const [history, setHistory] = useState([]);
   const [dateSort, setDateSort] = useState('new');
-  const [dateRange, setDateRange] = useState('all');              // ← новый стейт
-  const [viewMode, setViewMode] = useState('table');
+  const [dateRange, setDateRange] = useState('all');  
+  
+  
+  
+  // ← новый стейт
+  const [isMobile, setIsMobile] = useState(
+    typeof window !== 'undefined' && window.innerWidth <= 768
+    );
+    // Режим отображения: по умолчанию table на десктопе, list на мобилке
+    const [viewMode, setViewMode] = useState(isMobile ? 'list' : 'table');
+  
+    useEffect(() => {
+      const onResize = () => {
+        const mobile = window.innerWidth <= 768;
+          setIsMobile(mobile);
+          setViewMode(mobile ? 'list' : 'table');
+        };
+        // сразу приводим в корректный режим при монтировании
+        onResize();
+        window.addEventListener('resize', onResize);
+        return () => window.removeEventListener('resize', onResize);
+      }, []);
+
+
   const [openDetailCardId, setOpenDetailCardId] = useState(null);
   const [openDropdownCardId, setOpenDropdownCardId] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -23,6 +46,10 @@ function ProfileUserHistory({ searchTerm = '' }) {
   const itemsPerPage = 10;
   const navigate = useNavigate();
 
+
+
+
+  
   // глобальный клик для закрытия dropdown/detail
   useEffect(() => {
     const handleDocumentClick = () => {
@@ -46,7 +73,7 @@ function ProfileUserHistory({ searchTerm = '' }) {
         const { id } = jwtDecode(token);
         setUserId(id);
       } catch {
-        console.error('Ошибка декодирования токена');
+        console.error('Token decoding error');
       }
     }
   }, []);
@@ -57,7 +84,7 @@ function ProfileUserHistory({ searchTerm = '' }) {
     api.get(`/profile/history/${userId}`)
       .then(res => setHistory(res.data))
       .catch(err => {
-        console.error('Ошибка при загрузке истории пользователя:', err);
+        console.error('Error loading user history:', err);
         toast.error('Error loading history');
       });
   }, [userId]);
@@ -128,26 +155,27 @@ function ProfileUserHistory({ searchTerm = '' }) {
         setCurrentPage(1);
       })
       .catch(err => {
-        console.error('Ошибка при очистке истории:', err);
+        console.error('Error clearing history:', err);
         toast.error('Error clearing history');
       });
   };
 
   return (
-    <div>
+    <div className="profile-created-quizzes profile-user-history">
+
       {/* Фильтры */}
       <div className="block-container">
         <div className="filters-row">
           <label className="date-sort">
-            Sort:
             <select value={dateSort} onChange={e => setDateSort(e.target.value)}>
+              <option>Sort</option>
               <option value="new">Newest</option>
               <option value="old">Oldest</option>
             </select>
           </label>
           <label className="date-sort" style={{ marginLeft: '1rem' }}>
-            Range:
             <select value={dateRange} onChange={e => setDateRange(e.target.value)}>
+              <option>Range</option>
               <option value="all">All</option>
               <option value="day">Today</option>
               <option value="week">Last 7 days</option>
@@ -168,24 +196,30 @@ function ProfileUserHistory({ searchTerm = '' }) {
         </div>
       </div>
 
-      {/* Вид */}
-      <div className="block-container">
-        <div className="filters-row">
-          <button
-            className={viewMode === 'table' ? 'active' : ''}
-            onClick={() => { setViewMode('table'); setCurrentPage(1); }}
-          >Table View</button>
-          <button
-            className={viewMode === 'list' ? 'active' : ''}
-            onClick={() => { setViewMode('list'); setCurrentPage(1); }}
-          >List View</button>
-        </div>
-      </div>
+        {/* View toggle */}
+      {!isMobile && (
+  <div className="filters-row">
+    <div className="view-mode-toggle">
+      <button
+        onClick={() => { setViewMode('table'); setCurrentPage(1); }}
+        className={viewMode === 'table' ? 'active' : ''}
+      >
+        Table View
+      </button>
+      <button
+        onClick={() => setViewMode('list')}
+        className={viewMode === 'list' ? 'active' : ''}
+      >
+        List View
+      </button>
+    </div>
+  </div>
+)}
 
       {/* Контент */}
-      <div className="block-container quizzes-scrollable">
+      <div className="block-container">
         {viewMode === 'table' ? (
-          <>
+          <div className="table-wrapper scrollable">
             <table className="quizzes-table">
               <thead>
                 <tr>
@@ -198,62 +232,53 @@ function ProfileUserHistory({ searchTerm = '' }) {
                 </tr>
               </thead>
               <tbody>
-                {pageData.length ? (
-                  pageData.map(item => (
-                    <tr key={item.id}>
-                      <td>{item.quiz.title}</td>
-                      <td>{item.final_score} / {item.quiz.question_quantity}</td>
-                      <td>{((item.final_score / item.quiz.question_quantity)*100).toFixed(1)}%</td>
-                      <td>{formatDate(item.end_time)}</td>
-                      <td>{formatDuration(item.start_time, item.end_time)}</td>
-                      <td>
-                        <div className="actions-dropdown-wrapper">
-                          <button
-                            className="ellipsis-btn"
-                            onClick={e => {
-                              e.stopPropagation();
-                              setOpenDropdownCardId(openDropdownCardId === item.id ? null : item.id);
-                            }}
-                          >…</button>
-                          {openDropdownCardId === item.id && (
-                            <div className="actions-dropdown" onClick={e => e.stopPropagation()}>
-                              <button onClick={() => handleRetake(item.quiz_id)}>Retake</button>
-                              <button onClick={() => handleViewResults(item.id)}>Results</button>
-                            </div>
-                          )}
-                        </div>
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="6" style={{ textAlign: 'center' }}>No history</td>
+              {pageData.length ? (
+  pageData.map(item => {
+    const fullTitle = item.quiz.title || '';
+    const shortTitle =
+      fullTitle.length > 15
+        ? fullTitle.slice(0, 15) + '…'
+        : fullTitle;
+
+                return (
+                  <tr key={item.id}>
+                    <td title={fullTitle}>{shortTitle}</td>
+                    <td>{item.final_score} / {item.quiz.question_quantity}</td>
+                    <td>{((item.final_score / item.quiz.question_quantity) * 100).toFixed(1)}%</td>
+                    <td>{formatDate(item.end_time)}</td>
+                    <td>{formatDuration(item.start_time, item.end_time)}</td>
+                    <td>
+                      <div className="actions-dropdown-wrapper">
+                        <button
+                          className="ellipsis-btn"
+                          onClick={e => {
+                            e.stopPropagation();
+                            setOpenDropdownCardId(openDropdownCardId === item.id ? null : item.id);
+                          }}
+                        >…</button>
+                        {openDropdownCardId === item.id && (
+                          <div className="actions-dropdown" onClick={e => e.stopPropagation()}>
+                            <button onClick={() => handleRetake(item.quiz_id)}>Retake</button>
+                            <button onClick={() => handleViewResults(item.id)}>Results</button>
+                          </div>
+                        )}
+                      </div>
+                    </td>
                   </tr>
-                )}
+                );
+              })
+            ) : (
+              <tr>
+                <td colSpan="6" style={{ textAlign: 'center' }}>No history</td>
+              </tr>
+            )}
+
               </tbody>
             </table>
-            {totalPages > 1 && (
-              <div className="pagination-container">
-                <button
-                  onClick={() => setCurrentPage(p => Math.max(p - 1, 1))}
-                  disabled={currentPage === 1}
-                >Prev</button>
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
-                  <button
-                    key={p}
-                    className={p === currentPage ? 'active-page' : ''}
-                    onClick={() => setCurrentPage(p)}
-                  >{p}</button>
-                ))}
-                <button
-                  onClick={() => setCurrentPage(p => Math.min(p + 1, totalPages))}
-                  disabled={currentPage === totalPages}
-                >Next</button>
-              </div>
-            )}
-          </>
+           
+          </div>
         ) : (
-          <div className="list-view">
+          <div className="list-view scrollable">
             {sortedHistory.length ? (
               sortedHistory.map(attempt => {
                 const card = {
@@ -287,6 +312,25 @@ function ProfileUserHistory({ searchTerm = '' }) {
           </div>
         )}
       </div>
+
+
+
+
+{viewMode === 'table' && totalPages > 1 && (
+        <div className="pagination-container">
+          <button onClick={() => setCurrentPage(currentPage - 1)}>«</button>
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+            <button
+              key={page}
+              className={page === currentPage ? 'active-page' : ''}
+              onClick={() => setCurrentPage(page)}
+            >
+              {page}
+            </button>
+          ))}
+          <button onClick={() => setCurrentPage(currentPage + 1)}>»</button>
+        </div>
+      )}
 
       {/* Categories Modal */}
       {isCategoriesModalOpen && (

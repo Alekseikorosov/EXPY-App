@@ -1,0 +1,49 @@
+/* новое правило */
+.cooldown-date {
+  color: #d60000;
+  font-weight: 600;
+  display: inline-block;   /* строка переносится целиком */
+  max-width: 200px;        /* или сколько нужно */
+}
+
+/* серый текст пояснения */
+.cooldown-msg {
+  color: #6c6c6c;      /* мягкий серый */
+  font-weight: 500;
+display: inline-block;   /* строка переносится целиком */
+  max-width: 200px; 
+}
+
+/* сама дата – выделена более тёмным оттенком */
+.cooldown-msg .cooldown-date {
+  color: #3a3a3a;      /* темнее, чтобы выделялась */
+  font-weight: 700;
+display: inline-block;   /* строка переносится целиком */
+  max-width: 200px; 
+}
+.change-btn {
+  transition: background-color 0.2s ease, color 0.2s ease;
+  background-color: #ffffff;
+  color: #000000;
+  border: 1px solid #000000;
+}
+
+.change-btn:hover {
+  background-color: #000000;
+  color: #ffffff;
+  cursor: pointer;
+}
+/* reset для Back–кнопки */
+.back-btn {
+  background: none;        /* прозрачный фон */
+  border: none;            /* без рамки */
+  padding: 0;              /* без внутреннего отступа */
+  margin: 0;               /* без внешнего отступа */
+  text-decoration: none !important;  /* без подчеркивания */
+  color: inherit;          /* наследует цвет родителя */
+  font: inherit;           /* наследует шрифт родителя */
+  cursor: pointer;         /* курсор «рука» при наведении */
+}
+
+/* снимаем любые hover/focus/active-эффекты */
+

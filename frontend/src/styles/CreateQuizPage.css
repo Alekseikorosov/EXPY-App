@@ -1,253 +1,717 @@
-/* ===================== */
-/* 1) Основная раскладка */
-/* ===================== */
+/* src/styles/CreateQuizPage.css */
 
-/* Весь экран/страница */
+/* ===== Основная обёртка страницы ===== */
 .create-quiz-page {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    height: 100vh;     /* на всю высоту окна */
-    overflow: hidden;  /* прячем скролл внешнего контейнера */
-    font-family: sans-serif;
-  }
-  
-  /* Контейнер, где слева панель, а справа редактор */
-  .quiz-creation-container {
-    flex: 1;
-    display: flex;
-    overflow: hidden; /* чтобы не было двойного скролла */
-  }
-  
-  /* ===================== */
-  /* 2) Левая панель (sidebar) */
-  /* ===================== */
-  .quiz-sidebar {
-    width: 250px; 
-    background-color: #f6f6f6;
-    border-right: 1px solid #ddd;
-    padding: 1rem;
-    box-sizing: border-box;
-    display: flex;            /* для «прилипания» кнопок к низу */
-    flex-direction: column;
-    height: 100%;            /* тянется по высоте родителя */
-  }
-  
-  .quiz-sidebar h3 {
-    margin-top: 0;
-    margin-bottom: 1rem;
-    font-weight: 600;
-    font-size: 1.2rem;
-  }
-  
-  /* Список вопросов:
-     flex: 1 → занимает всё свободное место,
-     overflow-y: auto → прокрутка при большом числе вопросов */
-  .questions-list {
-    flex: 1;
-    overflow-y: auto;
-    margin-bottom: 1rem;
-    /* Можно небольшой padding, если нужно */
-  }
-  
-  /* Блок кнопок внизу */
-  .sidebar-buttons {
-    margin-top: auto;    /* «прилипает» к низу, т.к. questions-list растягивается */
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-  
-  /* Кнопки внутри сайдбара */
-  .sidebar-buttons button {
-    width: 100%;
-    padding: 8px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 0.9rem;
-  }
-  
-  /* ===================== */
-  /* 3) Превью вопросов (в левой панели) */
-  /* ===================== */
-  .question-preview {
-    background-color: #fff;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    margin-bottom: 0.5rem;
-    padding: 0.5rem;
-    cursor: pointer;
-    transition: background-color 0.2s ease, box-shadow 0.2s ease;
-  }
-  
-  /* При наведении — слегка меняем фон/тень */
-  .question-preview:hover {
-    background-color: #e9e9e9;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  }
-  
-  /* Когда вопрос активен (выбран) */
-  .question-preview.active {
-    border-color: #4caf50;
-    background-color: #defcd7;
-  }
-  
-  /* ===================== */
-  /* 4) Правая часть (editor) */
-  /* ===================== */
-  .quiz-editor {
-    flex: 1;
-    padding: 1rem 2rem;
-    overflow-y: auto; /* прокрутка в правой части, если нужно */
-  }
-  
-  /* Сообщение об ошибке/уведомлении */
-  .message {
-    color: red;
-    font-weight: 500;
-    margin-bottom: 1rem;
-  }
-  
-  /* Блок с общими полями квиза (title, cover, category) */
-  .quiz-global-fields {
-    margin-bottom: 2rem;
-    background-color: #fafafa;
-    padding: 1rem;
-    border-radius: 6px;
-    border: 1px solid #ddd;
-  }
-  
-  .quiz-global-fields h2 {
-    margin-top: 0;
-    margin-bottom: 1rem;
-  }
-  
-  /* Названия полей (Title, Cover, Category) */
-  .quiz-global-fields label {
-    display: block;
-    margin-top: 0.5rem;
-    margin-bottom: 0.2rem;
-    font-weight: 500;
-  }
-  
-  /* Инпуты и селекты */
-  .quiz-global-fields input,
-  .quiz-global-fields select,
-  .quiz-global-fields textarea {
-    width: 100%;
-    padding: 8px;
-    margin-bottom: 0.5rem;
-    font-size: 0.9rem;
-    box-sizing: border-box;
-  }
-  
-  /* Редактор выбранного вопроса (справа) */
-  .question-editor {
-    margin-bottom: 2rem;
-    background-color: #fafafa;
-    padding: 1rem;
-    border-radius: 6px;
-    border: 1px solid #ddd;
-  }
-  
-  .question-editor h2 {
-    margin-top: 0;
-    margin-bottom: 1rem;
-    font-size: 1.2rem;
-    font-weight: 600;
-  }
-  
-  .question-editor label {
-    display: block;
-    margin: 0.5rem 0 0.2rem;
-    font-weight: 500;
-  }
-  
-  .question-editor input[type="text"],
-  .question-editor textarea {
-    width: 100%;
-    padding: 8px;
-    box-sizing: border-box;
-    margin-bottom: 0.75rem;
-    font-size: 0.9rem;
-  }
-  
-  /* ===================== */
-  /* 5) Модальное окно */
-  /* ===================== */
-  
-  /* Полупрозрачный фон */
-  .modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0,0,0,0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  /* Белый «контейнер» контента модалки */
-  .modal-content {
-    background-color: #fff;
-    padding: 1.5rem;
-    border-radius: 6px;
-    max-width: 600px;
-    width: 100%;
-    box-sizing: border-box;
-  }
-  
-  .modal-content h2 {
-    margin-top: 0;
-  }
-  
-  .modal-section {
-    margin: 1rem 0;
-  }
-  
-  /* Кнопки внутри модалки */
-  .modal-buttons {
-    margin-top: 1rem;
-    text-align: right;
-  }
-  
-  .modal-buttons button {
-    padding: 0.5rem 1rem;
-    cursor: pointer;
-  }
-  
-  .notification {
-    position: fixed;
-    top: -50px;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: #28a745;
-    color: #fff;
-    padding: 10px 20px;
-    border-radius: 4px;
-    z-index: 10000;
-    animation: slideDown 1,5s forwards;
-  }
-  
-  @keyframes slideDown {
-    0% {
-      top: -50px;
-      opacity: 0;
-    }
-    20% {
-      top: 20px;
-      opacity: 1;
-    }
-    80% {
-      top: 20px;
-      opacity: 1;
-    }
-    100% {
-      top: -50px;
-      opacity: 0;
-    }
-  }
-  
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+/* ===== Контейнер с боковым меню и редактором ===== */
+.quiz-creation-container {
+  flex: 1;
+  display: flex;
+  max-width: 1500px;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* ===== Sidebar ===== */
+.quiz-sidebar {
+  width: 240px;
+  background: #fff;
+  border-right: 1px solid #e0e0e0;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 2px 0 5px rgba(0,0,0,0.03);
+}
+
+.quiz-sidebar h3 {
+  font-size: 1.8rem;
+  margin-left: 16px;    /* сдвигаем чуть правее */
+  color: #2ca192;       /* делаем текст зелёным в тон кнопок */
+}
+
+.questions-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem;
+}
+
+.question-preview {
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.75rem;
+  background: #fff;
+  border: 1px solid #ececec;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  transition: background-color .2s, border-color .2s;
+}
+
+.question-preview:hover {
+  background: #f9f9f9;
+}
+
+.question-preview.active {
+  background: #e6f7f5;
+  border-color: #ececec;
+  border-left: 4px solid #2ca192;
+}
+
+.question-preview .correct-count {
+  margin-left: auto;
+  font-size: 0.8rem;
+  color: #2ca192;
+}
+
+.sidebar-buttons {
+  flex-shrink: 0;
+  margin-top: auto;
+  padding: 1rem;
+  background: #fff;
+  border-top: 1px solid #eee;
+  box-shadow: 0 -1px 3px rgba(0,0,0,0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.sidebar-buttons button {
+  width: 100%;
+  padding: 10px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background-color .2s, color .2s;
+  border: none;
+}
+
+/* + Add Question */
+.sidebar-buttons button:nth-child(1) {
+  background: #f8f8f8;
+  color: #333;
+  border: 1px solid #ddd;
+}
+.sidebar-buttons button:nth-child(1):hover {
+  background: #ececec;
+}
+
+/* Delete Selected */
+.sidebar-buttons button:nth-child(2) {
+  background: #ff6868;
+  color: #fff;
+}
+.sidebar-buttons button:nth-child(2):hover {
+  background: #e04f4f;
+}
+
+/* Cancel */
+.sidebar-buttons button:nth-child(3) {
+  background: #f0f0f0;
+  color: #333;
+  border: 1px solid #ddd;
+}
+.sidebar-buttons button:nth-child(3):hover {
+  background: #e2e2e2;
+}
+
+/* Finish */
+.sidebar-buttons button:nth-child(4) {
+  background: #2ca192;
+  color: #fff;
+}
+.sidebar-buttons button:nth-child(4):hover {
+  background: #128371;
+}
+
+/* ===== Ошибки ===== */
+.message {
+  color: #d9534f;
+  font-weight: 600;
+  margin: 1rem 0;
+}
+
+/* ===== Editor ===== */
+.quiz-editor {
+  flex: 1;
+  padding: 2rem;
+  background: #fefefe;
+  overflow-y: auto;
+}
+
+/* — Quiz Settings */
+.quiz-global-fields {
+  background: #fff;
+  padding: 1.5rem;
+  border-radius: 10px;
+  border: 1px solid #e0e0e0;
+  margin-bottom: 2rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.quiz-global-fields h2 {
+  margin: 0 0 1rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #2ca192;
+}
+
+.quiz-global-fields label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.quiz-global-fields input[type="text"],
+.quiz-global-fields select {
+  width: 100%;
+  max-width: 850px;    /* ограничиваем максимальную ширину */
+  box-sizing: border-box;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  margin-bottom: 1rem;
+  box-sizing: border-box;
+}
+
+/* Стиль <select> ▼ */
+.quiz-global-fields select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg width='10' height='7' viewBox='0 0 10 7' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0l5 7 5-7H0z' fill='%23888'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 10px 7px;
+}
+
+
+.quiz-global-fields button {
+  display: inline-block;
+  padding: 0.5rem 1rem; /* одинаковые отступы */
+  font-size: 1rem;     /* единый размер текста */
+  line-height: 1.5;
+  min-width: 155px;    /* одинаковая минимальная ширина */
+  box-sizing: border-box;
+  margin-bottom: 1rem; /* равный отступ снизу */
+}
+
+/* Кнопка выбора категории */
+.category-button {
+  display: inline-block;
+  padding: 8px 14px;
+  border-radius: 6px;
+  background: #2ca192;
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  border: none;
+  transition: background-color .2s;
+  margin-bottom: 1rem;
+}
+.category-button:hover {
+  background: #128371;
+} /* :contentReference[oaicite:4]{index=4}:contentReference[oaicite:5]{index=5} */
+
+/* Photo (Cover) */
+.cover-button {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  background: #2ca192;
+  color: #fff;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color .2s;
+  margin-bottom: 1rem;
+}
+.cover-button:hover {
+  background: #128371;
+}
+
+.cover-preview {
+  text-align: center;
+  margin-top: 0.5rem;
+}
+.cover-preview img {
+  max-width: 100px;
+  height: auto;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+/* ===== Question Editor ===== */
+.question-editor h2 {
+  margin: 0 0 1.5rem;
+  font-size: 1.3rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #333;
+  border-bottom: 2px solid #2ca192;
+  padding-bottom: 6px;
+}
+
+.question-editor label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.question-editor textarea {
+  width: 100%;
+  resize: vertical;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  box-sizing: border-box;
+  margin-bottom: 1rem;
+}
+
+/* — Стили для полей ответов */
+.question-editor input[type="text"] {
+  width: 100% !important;
+  max-width: none !important;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  box-sizing: border-box;
+  margin: 0;
+  height: 50px;
+  margin-top: 1rem;                    /* сбрасываем отступы */
+
+}
+
+/* ===== Ответы (2×2) ===== */
+.answers-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.answer-option {
+  position: relative;    /* для абсолютного позиционирования кнопки */
+  background: #f7f7f7;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  transition: box-shadow .2s;
+  padding-top: 2.5rem;   /* чуть меньше, чтобы метка поднялась */
+}
+
+.answer-option:hover {
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+/* Ставим метку и кнопку на один уровень */
+.answer-option > label {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  margin: 0;
+  font-weight: 600;
+}
+
+.toggle-correct-btn {
+  position: absolute;     /* в правый верхний угол */
+  top: 16px;
+  right: 16px;
+  align-self: initial; 
+  padding: 6px 12px;
+  border: 1px solid #2ca192;
+  border-radius: 5px;
+  background: transparent;
+  color: #2ca192;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color .2s;
+}
+.toggle-correct-btn.active {
+  background: #2ca192;
+  color: #fff;
+}
+
+/* ===== Модалки ===== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.modal-content {
+  background: #fff;
+  padding: 2rem;
+  width: 90%;
+  max-width: 500px;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+
+.modal-content h3 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  color: #2ca192;
+}
+
+/* Группы полей внутри модалки */
+.modal-group {
+  margin-bottom: 1rem;
+}
+.modal-group label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+.modal-group input[type="text"],
+.modal-group input[type="file"] {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  box-sizing: border-box;
+}
+
+/* Действия (Save / Cancel) */
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+/* Кнопки .btn */
+.btn {
+  display: inline-block;
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  border: none;
+  text-align: center;
+  transition: background-color .2s;
+}
+
+.btn-success {
+  background: #2ca192;
+  color: #fff;
+}
+.btn-success:hover {
+  background: #128371;
+}
+
+.btn-secondary {
+  background: #ccc;
+  color: #333;
+}
+.btn-secondary:hover {
+  background: #bbb;
+} /* :contentReference[oaicite:6]{index=6}:contentReference[oaicite:7]{index=7} */
+
+/* ===== Crop-модал ===== */
+.crop-modal { max-width: 600px; }
+.crop-container {
+  position: relative;
+  width: 100%;
+  height: 300px;
+  background: #000;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.crop-controls {
+  margin-top: 1rem;
+  text-align: center;
+}
+.crop-controls input[type="range"] {
+  width: 80%;
+}
+
+/* ===== Стрелка для Quiz Settings ===== */
+.custom-arrow {
+  display: inline-block;
+  width: 0; height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 8px solid #2ca192;
+  transition: transform .3s;
+}
+.toggle-settings-btn.collapsed .custom-arrow {
+  transform: rotate(180deg);
+}
+
+
+/* ===== Кнопка Select/Change Image в редакторе вопроса ===== */
+.question-editor > button {
+  display: inline-block;
+  margin: 0.5rem 0 1rem;      /* отступы сверху/снизу */
+  padding: 8px 16px;          /* внутренние отступы */
+  background-color: #2ca192;  /* зелёный фон */
+  color: #fff;                /* белый текст */
+  border: none;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.question-editor > button:hover {
+  background-color: #128371;
+}
+
+
+
+/* === Превью обложки (16:9) с оверлей-кнопкой === */
+.cover-wrapper {
+  position: relative;
+  width: 100%;
+  padding-top: 56.25%;      /* 16:9 */
+  overflow: hidden;
+  border-radius: 8px;
+  margin-top: 1rem;
+}
+.cover-img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.cover-change-btn {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;                        /* поверх картинки */
+  padding: 0.5rem 1rem;
+  background: rgba(44,161,146,0.9);   /* ваш фирменный зелёный с небольшим затемнением */
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  font-weight: 600;
+  cursor: pointer;
+  opacity: 1;                         /* всегда видно */
+  transition: opacity 0.2s;
+}
+
+
+/* === Контейнер обложки === */
+.cover-container {
+  margin-top: 1rem;
+}
+
+/* === Обёртка 16:9 === */
+.cover-wrapper {
+  position: relative;
+  width: 100%;
+  padding-top: 56.25%; /* 16:9 */
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+/* === Само изображение === */
+.cover-img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* === Оверлей-кнопка === */
+.cover-change-btn {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  padding: 0.5rem 1rem;
+  background: rgba(44, 161, 146, 0.9);
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  font-weight: 600;
+  cursor: pointer;
+  opacity: 1;
+  transition: opacity 0.2s;
+}
+
+/* === Селектор, когда обложки ещё нет === */
+.cover-select-btn {
+  padding: 0.5rem 1rem;
+  background: #2ca192;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+
+/* Скрываем кнопку Change Cover по умолчанию */
+.cover-change-btn {
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+}
+
+/* Показываем кнопку при наведении на обёртку картинки */
+.cover-wrapper:hover .cover-change-btn {
+  opacity: 1;
+}
+
+
+.question-editor .cover-preview {
+  width: 100%;           /* делаем контейнер на всю ширину */
+  margin: 1rem 0;        /* немного отступов сверху/снизу */
+  text-align: center;    /* если нужно центрировать картинку */
+}
+.question-editor .cover-preview img {
+  width: 100% !important;     /* растягиваем на всю ширину контейнера */
+  max-width: none !important; /* сбрасываем прежнее ограничение */
+  max-height: auto;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  object-fit: cover; 
+  max-height: 300px;    /* ограничиваем высоту */
+  margin: 0 auto;          /* обрезка по краям при необходимости */
+}
+
+
+
+/* === Overlay для редактирования вопросного изображения === */
+.image-edit-wrapper {
+  position: relative;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.image-edit-wrapper img {
+  display: block;
+  max-width: 100%;
+  object-fit: cover;
+  /* object-position будет устанавливаться inline-стилями из React */
+}
+
+.image-edit-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  padding: 6px 12px;
+  border-radius: 5px;
+  background: rgba(44,161,146,0.9);
+  color: #fff;
+  border: none;
+  font-size: 0.9rem;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.image-edit-wrapper:hover .image-edit-btn {
+  opacity: 1;
+}
+
+
+
+.image-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.edit-button {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  padding: 4px 8px;
+  background: rgba(0,0,0,0.6);
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  opacity: 0;
+  transition: opacity .2s;
+  cursor: pointer;
+}
+
+.image-wrapper:hover .edit-button {
+  opacity: 1;
+}
+
+/* стили модалки */
+.crop-modal {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.crop-content {
+  background: #fff;
+  padding: 16px;
+  border-radius: 8px;
+}
+.crop-controls {
+  margin-top: 8px;
+  text-align: right;
+}
+.crop-controls button {
+  margin-left: 8px;
+}
+
+
+.field-with-counter-title {
+  position: relative;
+  margin-bottom: 1rem;
+  max-width: 850px;
+}
+
+.field-with-counter-title .char-counter {
+  position: absolute;
+  bottom: 20px;
+  right: 8px;
+  font-size: 0.75rem;
+  color: #666;
+}
+
+.field-with-counter {
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+.field-with-counter .char-counter {
+  position: absolute;
+  bottom: 4px;
+  right: 8px;
+  font-size: 0.75rem;
+  color: #666;
+}
+
+.field-with-counter textarea {
+  resize: none;
+}

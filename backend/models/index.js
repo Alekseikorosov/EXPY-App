@@ -14,7 +14,8 @@ const PasswordReset = require('./PasswordReset');
 const QuizProgress = require('./QuizProgress');
 
 const TwoFactorAuth = require('./TwoFactorAuth');
-const BackupCode = require('./BackupCode');
+const UserRecoveryCode = require('./UserRecoveryCode');
+const EmailConfirmation = require("./EmailConfirmation");
 const RefreshToken = require('./RefreshToken');
 
 // Собираем в db
@@ -29,7 +30,7 @@ const db = {
   UserFavorite,
   PasswordReset,
   TwoFactorAuth,
-  BackupCode,
+  UserRecoveryCode,
   RefreshToken,
   sequelize,
   Sequelize
@@ -48,10 +49,7 @@ Question.hasMany(Answer, { foreignKey: 'question_id', as: 'answers' });
 Answer.belongsTo(Question, { foreignKey: 'question_id', as: 'question' });
 
 User.hasOne(TwoFactorAuth, { foreignKey: 'user_id', as: 'twoFactorAuth' });
-TwoFactorAuth.belongsTo(User, { foreignKey: 'user_id', as: 'user' });
-
-User.hasMany(BackupCode, { foreignKey: 'user_id', as: 'backupCodes' });
-BackupCode.belongsTo(User, { foreignKey: 'user_id', as: 'user' });
+TwoFactorAuth.belongsTo(User, { foreignKey: 'user_id', as: 'userTwoFactor' });
 
 Quiz.hasOne(QuizProgress,   { foreignKey: 'quiz_id',    as: 'progress' });
 QuizProgress.belongsTo(Quiz,{ foreignKey: 'quiz_id',    as: 'quiz' });
