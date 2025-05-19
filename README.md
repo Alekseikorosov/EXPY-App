@@ -1,11 +1,12 @@
-# EXPY
+t# EXPY
 
 ## Description
+EXPY is a web application where users can take various multiple-choice tests; additionally, registered users can create their own quizzes for others to take.
 
-EXPY is a web application for quizzes and tests. Users can create their own quizzes, take tests on predefined topics, and track their progress.
-
+![reg](https://github.com/user-attachments/assets/ec6aa290-145f-47fe-9411-94b146890986)
+The homepage for users.
 ## Contributions
-
+Our team consists of three members.
 List of actions performed by each team member.
 
 **Juri Degtjarjov**
@@ -46,10 +47,19 @@ List of actions performed by each team member.
 
 ## Key Features
 
-* **Quiz creation and editing**
-* **Taking tests** with result display
-* **User profile** with quiz history
-* **Admin panel** for managing users and content
+* Quiz creation and editing
+* Taking tests with result display and statistics
+* User registration and login
+* Password recovery via email links
+* Two-factor authentication (TOTP via authenticator apps, recovery codes, email confirmation)
+* User profile management (viewing and updating name, email, password)
+* Quiz history tracking with progress visualization
+* Saving and accessing favorite quizzes
+* Game session management for quizzes
+* Configurable email notifications for key user actions
+* Admin panel for managing users, quizzes
+* Responsive design for desktop and mobile with styled modals and pages
+* Robust database schema using MySQL and Sequelize ORM.
 
 ## Technology Stack
 
@@ -77,8 +87,9 @@ List of actions performed by each team member.
 * **body-parser** and **cors** — middleware for request body parsing and CORS
 * **nodemailer** — sending emails from Node.js
 * **qrcode** — generating QR codes for 2FA
-* **node-cron** — scheduling background tasks
-* **nodemon** — automatic server restart on code changes
+* **For developers:**
+  * **node-cron** — scheduling background tasks
+  * **nodemon** — automatic server restart on code changes
 
 ## Requirements
 
@@ -92,7 +103,6 @@ List of actions performed by each team member.
 
 ```bash
 git clone https://github.com/Alekseikorosov/EXPY-App.git
-cd EXPY-App
 ```
 
 ### 2. Install frontend dependencies:
@@ -177,7 +187,17 @@ ACCESS_TOKEN_SECRET=your_secret
 REFRESH_TOKEN_SECRET=your_secret
 EMAIL_USER=example@mail.com
 EMAIL_PASS=your_email_app_password
+BASE_URL=https://expy.zapto.org
+
+CLOUD_COMPUTING_PLETFORM_STORAGE_CONNECTION_STRING=DefaultEndpointsProtocol=https;AccountName=your_account_name;AccountKey=your_AccountKey;EndpointSuffix=core.windows.net
+CLOUD_COMPUTING_PLETFORM_STORAGE_CONTAINER=folder_name
+
 ```
+![41](https://github.com/user-attachments/assets/da038702-df53-4b4a-87a8-98ae17d800b5)
+Example cloud computing pletform "Microsoft Azure".
+
+![40](https://github.com/user-attachments/assets/c3b65bcb-9670-4008-a323-ab237b698d13)
+Folders in MC Azure.
 
 ### 6. Run frontend and backend in development mode:
 
@@ -194,23 +214,5 @@ npm start
 cd backend
 npm run dev
 ```
-
-### 7. Open the application in your browser:
-
-[http://localhost:3000](http://localhost:3000)
-
-## Testing
-
-* **Frontend unit tests:**
-
-```bash
-cd frontend
-npm test
-```
-
-* **Backend tests:**
-
-```bash
-cd backend
-npm test
-```
+## Contacts
+* aleksei.korosov@ivkhk.ee
